@@ -8,18 +8,20 @@ import (
 	"testing"
 )
 
-func TestTserver_CreateUser(t *testing.T) {
-
+func TestTserver_CreateTask(t *testing.T) {
 	mc := minimock.NewController(t)
 	defer mc.Finish()
 
 	mockRepo := NewRepositoryMock(mc)
-	mockRepo.CreateUserMock.Return(1, nil)
+	mockRepo.CreateTaskMock.Return(1, nil)
 	ctx := context.Background()
 	svc := NewServer(mockRepo)
 
-	UserID, err := svc.CreateUser(ctx, &pb.CreateUserRequest{})
+	TaskID, err := svc.CreateTask(ctx, &pb.Task{
+		Name:        "test name",
+		Description: "test description",
+	})
 
 	assert.Nil(t, err)
-	assert.Equal(t, uint64(1), UserID.ID)
+	assert.Equal(t, uint64(1), TaskID.ID)
 }

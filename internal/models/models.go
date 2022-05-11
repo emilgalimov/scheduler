@@ -8,8 +8,8 @@ type User struct {
 
 type Task struct {
 	ID          int
-	name        string
-	description string
+	Name        string
+	Description string
 	stages      []TaskStage
 }
 
