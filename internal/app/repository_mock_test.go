@@ -24,11 +24,23 @@ type RepositoryMock struct {
 	beforeCreateTaskCounter uint64
 	CreateTaskMock          mRepositoryMockCreateTask
 
+	funcCreateTaskStage          func(ctx context.Context, taskStage models.TaskStage, taskID uint64) (u1 uint64, err error)
+	inspectFuncCreateTaskStage   func(ctx context.Context, taskStage models.TaskStage, taskID uint64)
+	afterCreateTaskStageCounter  uint64
+	beforeCreateTaskStageCounter uint64
+	CreateTaskStageMock          mRepositoryMockCreateTaskStage
+
 	funcCreateUser          func(ctx context.Context) (u1 uint64, err error)
 	inspectFuncCreateUser   func(ctx context.Context)
 	afterCreateUserCounter  uint64
 	beforeCreateUserCounter uint64
 	CreateUserMock          mRepositoryMockCreateUser
+
+	funcGetTask          func(ctx context.Context, ID uint64) (tp1 *models.Task, err error)
+	inspectFuncGetTask   func(ctx context.Context, ID uint64)
+	afterGetTaskCounter  uint64
+	beforeGetTaskCounter uint64
+	GetTaskMock          mRepositoryMockGetTask
 }
 
 // NewRepositoryMock returns a mock for Repository
@@ -41,8 +53,14 @@ func NewRepositoryMock(t minimock.Tester) *RepositoryMock {
 	m.CreateTaskMock = mRepositoryMockCreateTask{mock: m}
 	m.CreateTaskMock.callArgs = []*RepositoryMockCreateTaskParams{}
 
+	m.CreateTaskStageMock = mRepositoryMockCreateTaskStage{mock: m}
+	m.CreateTaskStageMock.callArgs = []*RepositoryMockCreateTaskStageParams{}
+
 	m.CreateUserMock = mRepositoryMockCreateUser{mock: m}
 	m.CreateUserMock.callArgs = []*RepositoryMockCreateUserParams{}
+
+	m.GetTaskMock = mRepositoryMockGetTask{mock: m}
+	m.GetTaskMock.callArgs = []*RepositoryMockGetTaskParams{}
 
 	return m
 }
@@ -264,6 +282,224 @@ func (m *RepositoryMock) MinimockCreateTaskInspect() {
 	}
 }
 
+type mRepositoryMockCreateTaskStage struct {
+	mock               *RepositoryMock
+	defaultExpectation *RepositoryMockCreateTaskStageExpectation
+	expectations       []*RepositoryMockCreateTaskStageExpectation
+
+	callArgs []*RepositoryMockCreateTaskStageParams
+	mutex    sync.RWMutex
+}
+
+// RepositoryMockCreateTaskStageExpectation specifies expectation struct of the Repository.CreateTaskStage
+type RepositoryMockCreateTaskStageExpectation struct {
+	mock    *RepositoryMock
+	params  *RepositoryMockCreateTaskStageParams
+	results *RepositoryMockCreateTaskStageResults
+	Counter uint64
+}
+
+// RepositoryMockCreateTaskStageParams contains parameters of the Repository.CreateTaskStage
+type RepositoryMockCreateTaskStageParams struct {
+	ctx       context.Context
+	taskStage models.TaskStage
+	taskID    uint64
+}
+
+// RepositoryMockCreateTaskStageResults contains results of the Repository.CreateTaskStage
+type RepositoryMockCreateTaskStageResults struct {
+	u1  uint64
+	err error
+}
+
+// Expect sets up expected params for Repository.CreateTaskStage
+func (mmCreateTaskStage *mRepositoryMockCreateTaskStage) Expect(ctx context.Context, taskStage models.TaskStage, taskID uint64) *mRepositoryMockCreateTaskStage {
+	if mmCreateTaskStage.mock.funcCreateTaskStage != nil {
+		mmCreateTaskStage.mock.t.Fatalf("RepositoryMock.CreateTaskStage mock is already set by Set")
+	}
+
+	if mmCreateTaskStage.defaultExpectation == nil {
+		mmCreateTaskStage.defaultExpectation = &RepositoryMockCreateTaskStageExpectation{}
+	}
+
+	mmCreateTaskStage.defaultExpectation.params = &RepositoryMockCreateTaskStageParams{ctx, taskStage, taskID}
+	for _, e := range mmCreateTaskStage.expectations {
+		if minimock.Equal(e.params, mmCreateTaskStage.defaultExpectation.params) {
+			mmCreateTaskStage.mock.t.Fatalf("Expectation set by When has same params: %#v", *mmCreateTaskStage.defaultExpectation.params)
+		}
+	}
+
+	return mmCreateTaskStage
+}
+
+// Inspect accepts an inspector function that has same arguments as the Repository.CreateTaskStage
+func (mmCreateTaskStage *mRepositoryMockCreateTaskStage) Inspect(f func(ctx context.Context, taskStage models.TaskStage, taskID uint64)) *mRepositoryMockCreateTaskStage {
+	if mmCreateTaskStage.mock.inspectFuncCreateTaskStage != nil {
+		mmCreateTaskStage.mock.t.Fatalf("Inspect function is already set for RepositoryMock.CreateTaskStage")
+	}
+
+	mmCreateTaskStage.mock.inspectFuncCreateTaskStage = f
+
+	return mmCreateTaskStage
+}
+
+// Return sets up results that will be returned by Repository.CreateTaskStage
+func (mmCreateTaskStage *mRepositoryMockCreateTaskStage) Return(u1 uint64, err error) *RepositoryMock {
+	if mmCreateTaskStage.mock.funcCreateTaskStage != nil {
+		mmCreateTaskStage.mock.t.Fatalf("RepositoryMock.CreateTaskStage mock is already set by Set")
+	}
+
+	if mmCreateTaskStage.defaultExpectation == nil {
+		mmCreateTaskStage.defaultExpectation = &RepositoryMockCreateTaskStageExpectation{mock: mmCreateTaskStage.mock}
+	}
+	mmCreateTaskStage.defaultExpectation.results = &RepositoryMockCreateTaskStageResults{u1, err}
+	return mmCreateTaskStage.mock
+}
+
+//Set uses given function f to mock the Repository.CreateTaskStage method
+func (mmCreateTaskStage *mRepositoryMockCreateTaskStage) Set(f func(ctx context.Context, taskStage models.TaskStage, taskID uint64) (u1 uint64, err error)) *RepositoryMock {
+	if mmCreateTaskStage.defaultExpectation != nil {
+		mmCreateTaskStage.mock.t.Fatalf("Default expectation is already set for the Repository.CreateTaskStage method")
+	}
+
+	if len(mmCreateTaskStage.expectations) > 0 {
+		mmCreateTaskStage.mock.t.Fatalf("Some expectations are already set for the Repository.CreateTaskStage method")
+	}
+
+	mmCreateTaskStage.mock.funcCreateTaskStage = f
+	return mmCreateTaskStage.mock
+}
+
+// When sets expectation for the Repository.CreateTaskStage which will trigger the result defined by the following
+// Then helper
+func (mmCreateTaskStage *mRepositoryMockCreateTaskStage) When(ctx context.Context, taskStage models.TaskStage, taskID uint64) *RepositoryMockCreateTaskStageExpectation {
+	if mmCreateTaskStage.mock.funcCreateTaskStage != nil {
+		mmCreateTaskStage.mock.t.Fatalf("RepositoryMock.CreateTaskStage mock is already set by Set")
+	}
+
+	expectation := &RepositoryMockCreateTaskStageExpectation{
+		mock:   mmCreateTaskStage.mock,
+		params: &RepositoryMockCreateTaskStageParams{ctx, taskStage, taskID},
+	}
+	mmCreateTaskStage.expectations = append(mmCreateTaskStage.expectations, expectation)
+	return expectation
+}
+
+// Then sets up Repository.CreateTaskStage return parameters for the expectation previously defined by the When method
+func (e *RepositoryMockCreateTaskStageExpectation) Then(u1 uint64, err error) *RepositoryMock {
+	e.results = &RepositoryMockCreateTaskStageResults{u1, err}
+	return e.mock
+}
+
+// CreateTaskStage implements Repository
+func (mmCreateTaskStage *RepositoryMock) CreateTaskStage(ctx context.Context, taskStage models.TaskStage, taskID uint64) (u1 uint64, err error) {
+	mm_atomic.AddUint64(&mmCreateTaskStage.beforeCreateTaskStageCounter, 1)
+	defer mm_atomic.AddUint64(&mmCreateTaskStage.afterCreateTaskStageCounter, 1)
+
+	if mmCreateTaskStage.inspectFuncCreateTaskStage != nil {
+		mmCreateTaskStage.inspectFuncCreateTaskStage(ctx, taskStage, taskID)
+	}
+
+	mm_params := &RepositoryMockCreateTaskStageParams{ctx, taskStage, taskID}
+
+	// Record call args
+	mmCreateTaskStage.CreateTaskStageMock.mutex.Lock()
+	mmCreateTaskStage.CreateTaskStageMock.callArgs = append(mmCreateTaskStage.CreateTaskStageMock.callArgs, mm_params)
+	mmCreateTaskStage.CreateTaskStageMock.mutex.Unlock()
+
+	for _, e := range mmCreateTaskStage.CreateTaskStageMock.expectations {
+		if minimock.Equal(e.params, mm_params) {
+			mm_atomic.AddUint64(&e.Counter, 1)
+			return e.results.u1, e.results.err
+		}
+	}
+
+	if mmCreateTaskStage.CreateTaskStageMock.defaultExpectation != nil {
+		mm_atomic.AddUint64(&mmCreateTaskStage.CreateTaskStageMock.defaultExpectation.Counter, 1)
+		mm_want := mmCreateTaskStage.CreateTaskStageMock.defaultExpectation.params
+		mm_got := RepositoryMockCreateTaskStageParams{ctx, taskStage, taskID}
+		if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
+			mmCreateTaskStage.t.Errorf("RepositoryMock.CreateTaskStage got unexpected parameters, want: %#v, got: %#v%s\n", *mm_want, mm_got, minimock.Diff(*mm_want, mm_got))
+		}
+
+		mm_results := mmCreateTaskStage.CreateTaskStageMock.defaultExpectation.results
+		if mm_results == nil {
+			mmCreateTaskStage.t.Fatal("No results are set for the RepositoryMock.CreateTaskStage")
+		}
+		return (*mm_results).u1, (*mm_results).err
+	}
+	if mmCreateTaskStage.funcCreateTaskStage != nil {
+		return mmCreateTaskStage.funcCreateTaskStage(ctx, taskStage, taskID)
+	}
+	mmCreateTaskStage.t.Fatalf("Unexpected call to RepositoryMock.CreateTaskStage. %v %v %v", ctx, taskStage, taskID)
+	return
+}
+
+// CreateTaskStageAfterCounter returns a count of finished RepositoryMock.CreateTaskStage invocations
+func (mmCreateTaskStage *RepositoryMock) CreateTaskStageAfterCounter() uint64 {
+	return mm_atomic.LoadUint64(&mmCreateTaskStage.afterCreateTaskStageCounter)
+}
+
+// CreateTaskStageBeforeCounter returns a count of RepositoryMock.CreateTaskStage invocations
+func (mmCreateTaskStage *RepositoryMock) CreateTaskStageBeforeCounter() uint64 {
+	return mm_atomic.LoadUint64(&mmCreateTaskStage.beforeCreateTaskStageCounter)
+}
+
+// Calls returns a list of arguments used in each call to RepositoryMock.CreateTaskStage.
+// The list is in the same order as the calls were made (i.e. recent calls have a higher index)
+func (mmCreateTaskStage *mRepositoryMockCreateTaskStage) Calls() []*RepositoryMockCreateTaskStageParams {
+	mmCreateTaskStage.mutex.RLock()
+
+	argCopy := make([]*RepositoryMockCreateTaskStageParams, len(mmCreateTaskStage.callArgs))
+	copy(argCopy, mmCreateTaskStage.callArgs)
+
+	mmCreateTaskStage.mutex.RUnlock()
+
+	return argCopy
+}
+
+// MinimockCreateTaskStageDone returns true if the count of the CreateTaskStage invocations corresponds
+// the number of defined expectations
+func (m *RepositoryMock) MinimockCreateTaskStageDone() bool {
+	for _, e := range m.CreateTaskStageMock.expectations {
+		if mm_atomic.LoadUint64(&e.Counter) < 1 {
+			return false
+		}
+	}
+
+	// if default expectation was set then invocations count should be greater than zero
+	if m.CreateTaskStageMock.defaultExpectation != nil && mm_atomic.LoadUint64(&m.afterCreateTaskStageCounter) < 1 {
+		return false
+	}
+	// if func was set then invocations count should be greater than zero
+	if m.funcCreateTaskStage != nil && mm_atomic.LoadUint64(&m.afterCreateTaskStageCounter) < 1 {
+		return false
+	}
+	return true
+}
+
+// MinimockCreateTaskStageInspect logs each unmet expectation
+func (m *RepositoryMock) MinimockCreateTaskStageInspect() {
+	for _, e := range m.CreateTaskStageMock.expectations {
+		if mm_atomic.LoadUint64(&e.Counter) < 1 {
+			m.t.Errorf("Expected call to RepositoryMock.CreateTaskStage with params: %#v", *e.params)
+		}
+	}
+
+	// if default expectation was set then invocations count should be greater than zero
+	if m.CreateTaskStageMock.defaultExpectation != nil && mm_atomic.LoadUint64(&m.afterCreateTaskStageCounter) < 1 {
+		if m.CreateTaskStageMock.defaultExpectation.params == nil {
+			m.t.Error("Expected call to RepositoryMock.CreateTaskStage")
+		} else {
+			m.t.Errorf("Expected call to RepositoryMock.CreateTaskStage with params: %#v", *m.CreateTaskStageMock.defaultExpectation.params)
+		}
+	}
+	// if func was set then invocations count should be greater than zero
+	if m.funcCreateTaskStage != nil && mm_atomic.LoadUint64(&m.afterCreateTaskStageCounter) < 1 {
+		m.t.Error("Expected call to RepositoryMock.CreateTaskStage")
+	}
+}
+
 type mRepositoryMockCreateUser struct {
 	mock               *RepositoryMock
 	defaultExpectation *RepositoryMockCreateUserExpectation
@@ -480,12 +716,233 @@ func (m *RepositoryMock) MinimockCreateUserInspect() {
 	}
 }
 
+type mRepositoryMockGetTask struct {
+	mock               *RepositoryMock
+	defaultExpectation *RepositoryMockGetTaskExpectation
+	expectations       []*RepositoryMockGetTaskExpectation
+
+	callArgs []*RepositoryMockGetTaskParams
+	mutex    sync.RWMutex
+}
+
+// RepositoryMockGetTaskExpectation specifies expectation struct of the Repository.GetTask
+type RepositoryMockGetTaskExpectation struct {
+	mock    *RepositoryMock
+	params  *RepositoryMockGetTaskParams
+	results *RepositoryMockGetTaskResults
+	Counter uint64
+}
+
+// RepositoryMockGetTaskParams contains parameters of the Repository.GetTask
+type RepositoryMockGetTaskParams struct {
+	ctx context.Context
+	ID  uint64
+}
+
+// RepositoryMockGetTaskResults contains results of the Repository.GetTask
+type RepositoryMockGetTaskResults struct {
+	tp1 *models.Task
+	err error
+}
+
+// Expect sets up expected params for Repository.GetTask
+func (mmGetTask *mRepositoryMockGetTask) Expect(ctx context.Context, ID uint64) *mRepositoryMockGetTask {
+	if mmGetTask.mock.funcGetTask != nil {
+		mmGetTask.mock.t.Fatalf("RepositoryMock.GetTask mock is already set by Set")
+	}
+
+	if mmGetTask.defaultExpectation == nil {
+		mmGetTask.defaultExpectation = &RepositoryMockGetTaskExpectation{}
+	}
+
+	mmGetTask.defaultExpectation.params = &RepositoryMockGetTaskParams{ctx, ID}
+	for _, e := range mmGetTask.expectations {
+		if minimock.Equal(e.params, mmGetTask.defaultExpectation.params) {
+			mmGetTask.mock.t.Fatalf("Expectation set by When has same params: %#v", *mmGetTask.defaultExpectation.params)
+		}
+	}
+
+	return mmGetTask
+}
+
+// Inspect accepts an inspector function that has same arguments as the Repository.GetTask
+func (mmGetTask *mRepositoryMockGetTask) Inspect(f func(ctx context.Context, ID uint64)) *mRepositoryMockGetTask {
+	if mmGetTask.mock.inspectFuncGetTask != nil {
+		mmGetTask.mock.t.Fatalf("Inspect function is already set for RepositoryMock.GetTask")
+	}
+
+	mmGetTask.mock.inspectFuncGetTask = f
+
+	return mmGetTask
+}
+
+// Return sets up results that will be returned by Repository.GetTask
+func (mmGetTask *mRepositoryMockGetTask) Return(tp1 *models.Task, err error) *RepositoryMock {
+	if mmGetTask.mock.funcGetTask != nil {
+		mmGetTask.mock.t.Fatalf("RepositoryMock.GetTask mock is already set by Set")
+	}
+
+	if mmGetTask.defaultExpectation == nil {
+		mmGetTask.defaultExpectation = &RepositoryMockGetTaskExpectation{mock: mmGetTask.mock}
+	}
+	mmGetTask.defaultExpectation.results = &RepositoryMockGetTaskResults{tp1, err}
+	return mmGetTask.mock
+}
+
+//Set uses given function f to mock the Repository.GetTask method
+func (mmGetTask *mRepositoryMockGetTask) Set(f func(ctx context.Context, ID uint64) (tp1 *models.Task, err error)) *RepositoryMock {
+	if mmGetTask.defaultExpectation != nil {
+		mmGetTask.mock.t.Fatalf("Default expectation is already set for the Repository.GetTask method")
+	}
+
+	if len(mmGetTask.expectations) > 0 {
+		mmGetTask.mock.t.Fatalf("Some expectations are already set for the Repository.GetTask method")
+	}
+
+	mmGetTask.mock.funcGetTask = f
+	return mmGetTask.mock
+}
+
+// When sets expectation for the Repository.GetTask which will trigger the result defined by the following
+// Then helper
+func (mmGetTask *mRepositoryMockGetTask) When(ctx context.Context, ID uint64) *RepositoryMockGetTaskExpectation {
+	if mmGetTask.mock.funcGetTask != nil {
+		mmGetTask.mock.t.Fatalf("RepositoryMock.GetTask mock is already set by Set")
+	}
+
+	expectation := &RepositoryMockGetTaskExpectation{
+		mock:   mmGetTask.mock,
+		params: &RepositoryMockGetTaskParams{ctx, ID},
+	}
+	mmGetTask.expectations = append(mmGetTask.expectations, expectation)
+	return expectation
+}
+
+// Then sets up Repository.GetTask return parameters for the expectation previously defined by the When method
+func (e *RepositoryMockGetTaskExpectation) Then(tp1 *models.Task, err error) *RepositoryMock {
+	e.results = &RepositoryMockGetTaskResults{tp1, err}
+	return e.mock
+}
+
+// GetTask implements Repository
+func (mmGetTask *RepositoryMock) GetTask(ctx context.Context, ID uint64) (tp1 *models.Task, err error) {
+	mm_atomic.AddUint64(&mmGetTask.beforeGetTaskCounter, 1)
+	defer mm_atomic.AddUint64(&mmGetTask.afterGetTaskCounter, 1)
+
+	if mmGetTask.inspectFuncGetTask != nil {
+		mmGetTask.inspectFuncGetTask(ctx, ID)
+	}
+
+	mm_params := &RepositoryMockGetTaskParams{ctx, ID}
+
+	// Record call args
+	mmGetTask.GetTaskMock.mutex.Lock()
+	mmGetTask.GetTaskMock.callArgs = append(mmGetTask.GetTaskMock.callArgs, mm_params)
+	mmGetTask.GetTaskMock.mutex.Unlock()
+
+	for _, e := range mmGetTask.GetTaskMock.expectations {
+		if minimock.Equal(e.params, mm_params) {
+			mm_atomic.AddUint64(&e.Counter, 1)
+			return e.results.tp1, e.results.err
+		}
+	}
+
+	if mmGetTask.GetTaskMock.defaultExpectation != nil {
+		mm_atomic.AddUint64(&mmGetTask.GetTaskMock.defaultExpectation.Counter, 1)
+		mm_want := mmGetTask.GetTaskMock.defaultExpectation.params
+		mm_got := RepositoryMockGetTaskParams{ctx, ID}
+		if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
+			mmGetTask.t.Errorf("RepositoryMock.GetTask got unexpected parameters, want: %#v, got: %#v%s\n", *mm_want, mm_got, minimock.Diff(*mm_want, mm_got))
+		}
+
+		mm_results := mmGetTask.GetTaskMock.defaultExpectation.results
+		if mm_results == nil {
+			mmGetTask.t.Fatal("No results are set for the RepositoryMock.GetTask")
+		}
+		return (*mm_results).tp1, (*mm_results).err
+	}
+	if mmGetTask.funcGetTask != nil {
+		return mmGetTask.funcGetTask(ctx, ID)
+	}
+	mmGetTask.t.Fatalf("Unexpected call to RepositoryMock.GetTask. %v %v", ctx, ID)
+	return
+}
+
+// GetTaskAfterCounter returns a count of finished RepositoryMock.GetTask invocations
+func (mmGetTask *RepositoryMock) GetTaskAfterCounter() uint64 {
+	return mm_atomic.LoadUint64(&mmGetTask.afterGetTaskCounter)
+}
+
+// GetTaskBeforeCounter returns a count of RepositoryMock.GetTask invocations
+func (mmGetTask *RepositoryMock) GetTaskBeforeCounter() uint64 {
+	return mm_atomic.LoadUint64(&mmGetTask.beforeGetTaskCounter)
+}
+
+// Calls returns a list of arguments used in each call to RepositoryMock.GetTask.
+// The list is in the same order as the calls were made (i.e. recent calls have a higher index)
+func (mmGetTask *mRepositoryMockGetTask) Calls() []*RepositoryMockGetTaskParams {
+	mmGetTask.mutex.RLock()
+
+	argCopy := make([]*RepositoryMockGetTaskParams, len(mmGetTask.callArgs))
+	copy(argCopy, mmGetTask.callArgs)
+
+	mmGetTask.mutex.RUnlock()
+
+	return argCopy
+}
+
+// MinimockGetTaskDone returns true if the count of the GetTask invocations corresponds
+// the number of defined expectations
+func (m *RepositoryMock) MinimockGetTaskDone() bool {
+	for _, e := range m.GetTaskMock.expectations {
+		if mm_atomic.LoadUint64(&e.Counter) < 1 {
+			return false
+		}
+	}
+
+	// if default expectation was set then invocations count should be greater than zero
+	if m.GetTaskMock.defaultExpectation != nil && mm_atomic.LoadUint64(&m.afterGetTaskCounter) < 1 {
+		return false
+	}
+	// if func was set then invocations count should be greater than zero
+	if m.funcGetTask != nil && mm_atomic.LoadUint64(&m.afterGetTaskCounter) < 1 {
+		return false
+	}
+	return true
+}
+
+// MinimockGetTaskInspect logs each unmet expectation
+func (m *RepositoryMock) MinimockGetTaskInspect() {
+	for _, e := range m.GetTaskMock.expectations {
+		if mm_atomic.LoadUint64(&e.Counter) < 1 {
+			m.t.Errorf("Expected call to RepositoryMock.GetTask with params: %#v", *e.params)
+		}
+	}
+
+	// if default expectation was set then invocations count should be greater than zero
+	if m.GetTaskMock.defaultExpectation != nil && mm_atomic.LoadUint64(&m.afterGetTaskCounter) < 1 {
+		if m.GetTaskMock.defaultExpectation.params == nil {
+			m.t.Error("Expected call to RepositoryMock.GetTask")
+		} else {
+			m.t.Errorf("Expected call to RepositoryMock.GetTask with params: %#v", *m.GetTaskMock.defaultExpectation.params)
+		}
+	}
+	// if func was set then invocations count should be greater than zero
+	if m.funcGetTask != nil && mm_atomic.LoadUint64(&m.afterGetTaskCounter) < 1 {
+		m.t.Error("Expected call to RepositoryMock.GetTask")
+	}
+}
+
 // MinimockFinish checks that all mocked methods have been called the expected number of times
 func (m *RepositoryMock) MinimockFinish() {
 	if !m.minimockDone() {
 		m.MinimockCreateTaskInspect()
 
+		m.MinimockCreateTaskStageInspect()
+
 		m.MinimockCreateUserInspect()
+
+		m.MinimockGetTaskInspect()
 		m.t.FailNow()
 	}
 }
@@ -510,5 +967,7 @@ func (m *RepositoryMock) minimockDone() bool {
 	done := true
 	return done &&
 		m.MinimockCreateTaskDone() &&
-		m.MinimockCreateUserDone()
+		m.MinimockCreateTaskStageDone() &&
+		m.MinimockCreateUserDone() &&
+		m.MinimockGetTaskDone()
 }

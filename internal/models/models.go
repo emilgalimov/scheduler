@@ -14,10 +14,10 @@ type Task struct {
 }
 
 type TaskStage struct {
-	name             string
-	description      string
-	minutesFromStart time.Duration
-	durationMinutes  time.Duration
+	Name             string
+	Description      string
+	MinutesFromStart time.Duration
+	DurationMinutes  time.Duration
 }
 
 type UserTask struct {
