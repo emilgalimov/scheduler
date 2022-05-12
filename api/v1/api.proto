@@ -47,7 +47,6 @@ message UnsubscribeUserResponse{
 }
 
 message GetTasksListRequest{
-  uint64 last_id = 1;
 }
 
 message GetTasksListResponse{

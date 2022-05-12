@@ -1,19 +1,22 @@
 package models
 
-import "time"
+import (
+	"time"
+)
 
 type User struct {
-	ID int
+	ID uint64
 }
 
 type Task struct {
-	ID          int
+	ID          uint64
 	Name        string
 	Description string
-	stages      []TaskStage
+	Stages      []*TaskStage
 }
 
 type TaskStage struct {
+	ID               uint64
 	Name             string
 	Description      string
 	MinutesFromStart time.Duration

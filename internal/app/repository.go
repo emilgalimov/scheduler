@@ -10,4 +10,5 @@ type Repository interface {
 	CreateTask(context.Context, models.Task) (uint64, error)
 	GetTask(ctx context.Context, ID uint64) (*models.Task, error)
 	CreateTaskStage(ctx context.Context, taskStage models.TaskStage, taskID uint64) (uint64, error)
+	GetAllTasks(ctx context.Context) ([]*models.Task, error)
 }
