@@ -28,6 +28,24 @@ func TestTserver_SubscribeUser(t *testing.T) {
 	assert.Equal(t, true, response.IsSubscribed)
 }
 
+func TestTserver_SubscribeUserReturnsRepoError(t *testing.T) {
+
+	mc := minimock.NewController(t)
+	defer mc.Finish()
+	mockRepo := NewRepositoryMock(mc)
+	mockRepo.CreateUserTaskMock.Return(errors.New("repo error"))
+	mockRepo.GetTaskMock.Return(&models.Task{}, nil)
+	mockRepo.GetUserTaskMock.Return(nil, nil)
+
+	ctx := context.Background()
+	svc := NewServer(mockRepo)
+
+	response, err := svc.SubscribeUser(ctx, &pb.SubscribeUserRequest{UserID: 1, TaskID: 1})
+
+	assert.Nil(t, response)
+	assert.Errorf(t, err, "repo error")
+}
+
 func TestTserver_SubscribeUserReturnsErrorWhenTaskNotFound(t *testing.T) {
 	mc := minimock.NewController(t)
 	defer mc.Finish()

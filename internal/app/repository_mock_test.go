@@ -42,6 +42,12 @@ type RepositoryMock struct {
 	beforeCreateUserTaskCounter uint64
 	CreateUserTaskMock          mRepositoryMockCreateUserTask
 
+	funcDeleteUserTask          func(ctx context.Context, userID uint64, taskID uint64) (err error)
+	inspectFuncDeleteUserTask   func(ctx context.Context, userID uint64, taskID uint64)
+	afterDeleteUserTaskCounter  uint64
+	beforeDeleteUserTaskCounter uint64
+	DeleteUserTaskMock          mRepositoryMockDeleteUserTask
+
 	funcGetAllTasks          func(ctx context.Context) (tpa1 []*models.Task, err error)
 	inspectFuncGetAllTasks   func(ctx context.Context)
 	afterGetAllTasksCounter  uint64
@@ -79,6 +85,9 @@ func NewRepositoryMock(t minimock.Tester) *RepositoryMock {
 
 	m.CreateUserTaskMock = mRepositoryMockCreateUserTask{mock: m}
 	m.CreateUserTaskMock.callArgs = []*RepositoryMockCreateUserTaskParams{}
+
+	m.DeleteUserTaskMock = mRepositoryMockDeleteUserTask{mock: m}
+	m.DeleteUserTaskMock.callArgs = []*RepositoryMockDeleteUserTaskParams{}
 
 	m.GetAllTasksMock = mRepositoryMockGetAllTasks{mock: m}
 	m.GetAllTasksMock.callArgs = []*RepositoryMockGetAllTasksParams{}
@@ -960,6 +969,223 @@ func (m *RepositoryMock) MinimockCreateUserTaskInspect() {
 	}
 }
 
+type mRepositoryMockDeleteUserTask struct {
+	mock               *RepositoryMock
+	defaultExpectation *RepositoryMockDeleteUserTaskExpectation
+	expectations       []*RepositoryMockDeleteUserTaskExpectation
+
+	callArgs []*RepositoryMockDeleteUserTaskParams
+	mutex    sync.RWMutex
+}
+
+// RepositoryMockDeleteUserTaskExpectation specifies expectation struct of the Repository.DeleteUserTask
+type RepositoryMockDeleteUserTaskExpectation struct {
+	mock    *RepositoryMock
+	params  *RepositoryMockDeleteUserTaskParams
+	results *RepositoryMockDeleteUserTaskResults
+	Counter uint64
+}
+
+// RepositoryMockDeleteUserTaskParams contains parameters of the Repository.DeleteUserTask
+type RepositoryMockDeleteUserTaskParams struct {
+	ctx    context.Context
+	userID uint64
+	taskID uint64
+}
+
+// RepositoryMockDeleteUserTaskResults contains results of the Repository.DeleteUserTask
+type RepositoryMockDeleteUserTaskResults struct {
+	err error
+}
+
+// Expect sets up expected params for Repository.DeleteUserTask
+func (mmDeleteUserTask *mRepositoryMockDeleteUserTask) Expect(ctx context.Context, userID uint64, taskID uint64) *mRepositoryMockDeleteUserTask {
+	if mmDeleteUserTask.mock.funcDeleteUserTask != nil {
+		mmDeleteUserTask.mock.t.Fatalf("RepositoryMock.DeleteUserTask mock is already set by Set")
+	}
+
+	if mmDeleteUserTask.defaultExpectation == nil {
+		mmDeleteUserTask.defaultExpectation = &RepositoryMockDeleteUserTaskExpectation{}
+	}
+
+	mmDeleteUserTask.defaultExpectation.params = &RepositoryMockDeleteUserTaskParams{ctx, userID, taskID}
+	for _, e := range mmDeleteUserTask.expectations {
+		if minimock.Equal(e.params, mmDeleteUserTask.defaultExpectation.params) {
+			mmDeleteUserTask.mock.t.Fatalf("Expectation set by When has same params: %#v", *mmDeleteUserTask.defaultExpectation.params)
+		}
+	}
+
+	return mmDeleteUserTask
+}
+
+// Inspect accepts an inspector function that has same arguments as the Repository.DeleteUserTask
+func (mmDeleteUserTask *mRepositoryMockDeleteUserTask) Inspect(f func(ctx context.Context, userID uint64, taskID uint64)) *mRepositoryMockDeleteUserTask {
+	if mmDeleteUserTask.mock.inspectFuncDeleteUserTask != nil {
+		mmDeleteUserTask.mock.t.Fatalf("Inspect function is already set for RepositoryMock.DeleteUserTask")
+	}
+
+	mmDeleteUserTask.mock.inspectFuncDeleteUserTask = f
+
+	return mmDeleteUserTask
+}
+
+// Return sets up results that will be returned by Repository.DeleteUserTask
+func (mmDeleteUserTask *mRepositoryMockDeleteUserTask) Return(err error) *RepositoryMock {
+	if mmDeleteUserTask.mock.funcDeleteUserTask != nil {
+		mmDeleteUserTask.mock.t.Fatalf("RepositoryMock.DeleteUserTask mock is already set by Set")
+	}
+
+	if mmDeleteUserTask.defaultExpectation == nil {
+		mmDeleteUserTask.defaultExpectation = &RepositoryMockDeleteUserTaskExpectation{mock: mmDeleteUserTask.mock}
+	}
+	mmDeleteUserTask.defaultExpectation.results = &RepositoryMockDeleteUserTaskResults{err}
+	return mmDeleteUserTask.mock
+}
+
+//Set uses given function f to mock the Repository.DeleteUserTask method
+func (mmDeleteUserTask *mRepositoryMockDeleteUserTask) Set(f func(ctx context.Context, userID uint64, taskID uint64) (err error)) *RepositoryMock {
+	if mmDeleteUserTask.defaultExpectation != nil {
+		mmDeleteUserTask.mock.t.Fatalf("Default expectation is already set for the Repository.DeleteUserTask method")
+	}
+
+	if len(mmDeleteUserTask.expectations) > 0 {
+		mmDeleteUserTask.mock.t.Fatalf("Some expectations are already set for the Repository.DeleteUserTask method")
+	}
+
+	mmDeleteUserTask.mock.funcDeleteUserTask = f
+	return mmDeleteUserTask.mock
+}
+
+// When sets expectation for the Repository.DeleteUserTask which will trigger the result defined by the following
+// Then helper
+func (mmDeleteUserTask *mRepositoryMockDeleteUserTask) When(ctx context.Context, userID uint64, taskID uint64) *RepositoryMockDeleteUserTaskExpectation {
+	if mmDeleteUserTask.mock.funcDeleteUserTask != nil {
+		mmDeleteUserTask.mock.t.Fatalf("RepositoryMock.DeleteUserTask mock is already set by Set")
+	}
+
+	expectation := &RepositoryMockDeleteUserTaskExpectation{
+		mock:   mmDeleteUserTask.mock,
+		params: &RepositoryMockDeleteUserTaskParams{ctx, userID, taskID},
+	}
+	mmDeleteUserTask.expectations = append(mmDeleteUserTask.expectations, expectation)
+	return expectation
+}
+
+// Then sets up Repository.DeleteUserTask return parameters for the expectation previously defined by the When method
+func (e *RepositoryMockDeleteUserTaskExpectation) Then(err error) *RepositoryMock {
+	e.results = &RepositoryMockDeleteUserTaskResults{err}
+	return e.mock
+}
+
+// DeleteUserTask implements Repository
+func (mmDeleteUserTask *RepositoryMock) DeleteUserTask(ctx context.Context, userID uint64, taskID uint64) (err error) {
+	mm_atomic.AddUint64(&mmDeleteUserTask.beforeDeleteUserTaskCounter, 1)
+	defer mm_atomic.AddUint64(&mmDeleteUserTask.afterDeleteUserTaskCounter, 1)
+
+	if mmDeleteUserTask.inspectFuncDeleteUserTask != nil {
+		mmDeleteUserTask.inspectFuncDeleteUserTask(ctx, userID, taskID)
+	}
+
+	mm_params := &RepositoryMockDeleteUserTaskParams{ctx, userID, taskID}
+
+	// Record call args
+	mmDeleteUserTask.DeleteUserTaskMock.mutex.Lock()
+	mmDeleteUserTask.DeleteUserTaskMock.callArgs = append(mmDeleteUserTask.DeleteUserTaskMock.callArgs, mm_params)
+	mmDeleteUserTask.DeleteUserTaskMock.mutex.Unlock()
+
+	for _, e := range mmDeleteUserTask.DeleteUserTaskMock.expectations {
+		if minimock.Equal(e.params, mm_params) {
+			mm_atomic.AddUint64(&e.Counter, 1)
+			return e.results.err
+		}
+	}
+
+	if mmDeleteUserTask.DeleteUserTaskMock.defaultExpectation != nil {
+		mm_atomic.AddUint64(&mmDeleteUserTask.DeleteUserTaskMock.defaultExpectation.Counter, 1)
+		mm_want := mmDeleteUserTask.DeleteUserTaskMock.defaultExpectation.params
+		mm_got := RepositoryMockDeleteUserTaskParams{ctx, userID, taskID}
+		if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
+			mmDeleteUserTask.t.Errorf("RepositoryMock.DeleteUserTask got unexpected parameters, want: %#v, got: %#v%s\n", *mm_want, mm_got, minimock.Diff(*mm_want, mm_got))
+		}
+
+		mm_results := mmDeleteUserTask.DeleteUserTaskMock.defaultExpectation.results
+		if mm_results == nil {
+			mmDeleteUserTask.t.Fatal("No results are set for the RepositoryMock.DeleteUserTask")
+		}
+		return (*mm_results).err
+	}
+	if mmDeleteUserTask.funcDeleteUserTask != nil {
+		return mmDeleteUserTask.funcDeleteUserTask(ctx, userID, taskID)
+	}
+	mmDeleteUserTask.t.Fatalf("Unexpected call to RepositoryMock.DeleteUserTask. %v %v %v", ctx, userID, taskID)
+	return
+}
+
+// DeleteUserTaskAfterCounter returns a count of finished RepositoryMock.DeleteUserTask invocations
+func (mmDeleteUserTask *RepositoryMock) DeleteUserTaskAfterCounter() uint64 {
+	return mm_atomic.LoadUint64(&mmDeleteUserTask.afterDeleteUserTaskCounter)
+}
+
+// DeleteUserTaskBeforeCounter returns a count of RepositoryMock.DeleteUserTask invocations
+func (mmDeleteUserTask *RepositoryMock) DeleteUserTaskBeforeCounter() uint64 {
+	return mm_atomic.LoadUint64(&mmDeleteUserTask.beforeDeleteUserTaskCounter)
+}
+
+// Calls returns a list of arguments used in each call to RepositoryMock.DeleteUserTask.
+// The list is in the same order as the calls were made (i.e. recent calls have a higher index)
+func (mmDeleteUserTask *mRepositoryMockDeleteUserTask) Calls() []*RepositoryMockDeleteUserTaskParams {
+	mmDeleteUserTask.mutex.RLock()
+
+	argCopy := make([]*RepositoryMockDeleteUserTaskParams, len(mmDeleteUserTask.callArgs))
+	copy(argCopy, mmDeleteUserTask.callArgs)
+
+	mmDeleteUserTask.mutex.RUnlock()
+
+	return argCopy
+}
+
+// MinimockDeleteUserTaskDone returns true if the count of the DeleteUserTask invocations corresponds
+// the number of defined expectations
+func (m *RepositoryMock) MinimockDeleteUserTaskDone() bool {
+	for _, e := range m.DeleteUserTaskMock.expectations {
+		if mm_atomic.LoadUint64(&e.Counter) < 1 {
+			return false
+		}
+	}
+
+	// if default expectation was set then invocations count should be greater than zero
+	if m.DeleteUserTaskMock.defaultExpectation != nil && mm_atomic.LoadUint64(&m.afterDeleteUserTaskCounter) < 1 {
+		return false
+	}
+	// if func was set then invocations count should be greater than zero
+	if m.funcDeleteUserTask != nil && mm_atomic.LoadUint64(&m.afterDeleteUserTaskCounter) < 1 {
+		return false
+	}
+	return true
+}
+
+// MinimockDeleteUserTaskInspect logs each unmet expectation
+func (m *RepositoryMock) MinimockDeleteUserTaskInspect() {
+	for _, e := range m.DeleteUserTaskMock.expectations {
+		if mm_atomic.LoadUint64(&e.Counter) < 1 {
+			m.t.Errorf("Expected call to RepositoryMock.DeleteUserTask with params: %#v", *e.params)
+		}
+	}
+
+	// if default expectation was set then invocations count should be greater than zero
+	if m.DeleteUserTaskMock.defaultExpectation != nil && mm_atomic.LoadUint64(&m.afterDeleteUserTaskCounter) < 1 {
+		if m.DeleteUserTaskMock.defaultExpectation.params == nil {
+			m.t.Error("Expected call to RepositoryMock.DeleteUserTask")
+		} else {
+			m.t.Errorf("Expected call to RepositoryMock.DeleteUserTask with params: %#v", *m.DeleteUserTaskMock.defaultExpectation.params)
+		}
+	}
+	// if func was set then invocations count should be greater than zero
+	if m.funcDeleteUserTask != nil && mm_atomic.LoadUint64(&m.afterDeleteUserTaskCounter) < 1 {
+		m.t.Error("Expected call to RepositoryMock.DeleteUserTask")
+	}
+}
+
 type mRepositoryMockGetAllTasks struct {
 	mock               *RepositoryMock
 	defaultExpectation *RepositoryMockGetAllTasksExpectation
@@ -1622,6 +1848,8 @@ func (m *RepositoryMock) MinimockFinish() {
 
 		m.MinimockCreateUserTaskInspect()
 
+		m.MinimockDeleteUserTaskInspect()
+
 		m.MinimockGetAllTasksInspect()
 
 		m.MinimockGetTaskInspect()
@@ -1654,6 +1882,7 @@ func (m *RepositoryMock) minimockDone() bool {
 		m.MinimockCreateTaskStageDone() &&
 		m.MinimockCreateUserDone() &&
 		m.MinimockCreateUserTaskDone() &&
+		m.MinimockDeleteUserTaskDone() &&
 		m.MinimockGetAllTasksDone() &&
 		m.MinimockGetTaskDone() &&
 		m.MinimockGetUserTaskDone()

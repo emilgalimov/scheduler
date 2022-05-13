@@ -13,4 +13,5 @@ type Repository interface {
 	GetAllTasks(ctx context.Context) ([]*models.Task, error)
 	CreateUserTask(ctx context.Context, userID uint64, taskID uint64) error
 	GetUserTask(ctx context.Context, userID uint64, taskID uint64) (*models.UserTask, error)
+	DeleteUserTask(ctx context.Context, userID uint64, taskID uint64) error
 }
