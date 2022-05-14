@@ -35,10 +35,10 @@ func TestTserver_GetTasksList(t *testing.T) {
 	ctx := context.Background()
 	svc := NewServer(mockRepo)
 
-	tasks, err := svc.GetTasksList(ctx, &pb.GetTasksListRequest{})
+	tasks, err := svc.GetTasksList(ctx)
 
 	assert.Nil(t, err)
-	assert.Equal(t, tasks, &pb.GetTasksListResponse{
+	assert.Equal(t, tasks, &pb.TasksList{
 		Tasks: []*pb.Task{
 			{
 				ID:          1,

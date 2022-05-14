@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "google/protobuf/empty.proto";
 
 option go_package = "gitlab.ozon.dev/emilgalimov/homework-2/api";
 
@@ -46,10 +47,7 @@ message UnsubscribeUserResponse{
   bool isUnsubscribed = 1;
 }
 
-message GetTasksListRequest{
-}
-
-message GetTasksListResponse{
+message TasksList{
   repeated Task tasks = 1;
 }
 
@@ -74,14 +72,10 @@ message UserTask {
   google.protobuf.Timestamp startTime = 3;
 }
 
-message GetUserTasksRequest {
+message GetUserTasksByTimeRequest {
   uint64 user_id = 1;
   google.protobuf.Timestamp timeFrom = 2;
   google.protobuf.Timestamp timeTo = 3;
-}
-
-message GetUserTasksResponse {
-  repeated Task tasks = 1;
 }
 
 service SomeStuff {
@@ -90,12 +84,12 @@ service SomeStuff {
   rpc CreateTask(Task) returns (TaskID) {}
   rpc CreateTaskStage(CreateTaskStageRequest) returns (TaskStageID) {}
 
-  rpc GetTasksList(GetTasksListRequest) returns (GetTasksListResponse) {}
+  rpc GetTasksList(google.protobuf.Empty) returns (TasksList) {}
 
   rpc SubscribeUser(SubscribeUserRequest) returns (SubscribeUserResponse){}
   rpc UnsubscribeUser(UnsubscribeUserRequest) returns (UnsubscribeUserResponse){}
 
-  rpc GetUserTasks(GetUserTasksRequest) returns (GetUserTasksResponse){}
+  rpc GetUserTasksByTime(GetUserTasksByTimeRequest) returns (TasksList){}
 }
 
 

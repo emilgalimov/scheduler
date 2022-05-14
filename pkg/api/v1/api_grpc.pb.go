@@ -11,6 +11,7 @@ import (
 	grpc "google.golang.org/grpc"
 	codes "google.golang.org/grpc/codes"
 	status "google.golang.org/grpc/status"
+	emptypb "google.golang.org/protobuf/types/known/emptypb"
 )
 
 // This is a compile-time assertion to ensure that this generated file
@@ -25,10 +26,10 @@ type SomeStuffClient interface {
 	CreateUser(ctx context.Context, in *CreateUserRequest, opts ...grpc.CallOption) (*User, error)
 	CreateTask(ctx context.Context, in *Task, opts ...grpc.CallOption) (*TaskID, error)
 	CreateTaskStage(ctx context.Context, in *CreateTaskStageRequest, opts ...grpc.CallOption) (*TaskStageID, error)
-	GetTasksList(ctx context.Context, in *GetTasksListRequest, opts ...grpc.CallOption) (*GetTasksListResponse, error)
+	GetTasksList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TasksList, error)
 	SubscribeUser(ctx context.Context, in *SubscribeUserRequest, opts ...grpc.CallOption) (*SubscribeUserResponse, error)
 	UnsubscribeUser(ctx context.Context, in *UnsubscribeUserRequest, opts ...grpc.CallOption) (*UnsubscribeUserResponse, error)
-	GetUserTasks(ctx context.Context, in *GetUserTasksRequest, opts ...grpc.CallOption) (*GetUserTasksResponse, error)
+	GetUserTasksByTime(ctx context.Context, in *GetUserTasksByTimeRequest, opts ...grpc.CallOption) (*TasksList, error)
 }
 
 type someStuffClient struct {
@@ -66,8 +67,8 @@ func (c *someStuffClient) CreateTaskStage(ctx context.Context, in *CreateTaskSta
 	return out, nil
 }
 
-func (c *someStuffClient) GetTasksList(ctx context.Context, in *GetTasksListRequest, opts ...grpc.CallOption) (*GetTasksListResponse, error) {
-	out := new(GetTasksListResponse)
+func (c *someStuffClient) GetTasksList(ctx context.Context, in *emptypb.Empty, opts ...grpc.CallOption) (*TasksList, error) {
+	out := new(TasksList)
 	err := c.cc.Invoke(ctx, "/SomeStuff/GetTasksList", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -93,9 +94,9 @@ func (c *someStuffClient) UnsubscribeUser(ctx context.Context, in *UnsubscribeUs
 	return out, nil
 }
 
-func (c *someStuffClient) GetUserTasks(ctx context.Context, in *GetUserTasksRequest, opts ...grpc.CallOption) (*GetUserTasksResponse, error) {
-	out := new(GetUserTasksResponse)
-	err := c.cc.Invoke(ctx, "/SomeStuff/GetUserTasks", in, out, opts...)
+func (c *someStuffClient) GetUserTasksByTime(ctx context.Context, in *GetUserTasksByTimeRequest, opts ...grpc.CallOption) (*TasksList, error) {
+	out := new(TasksList)
+	err := c.cc.Invoke(ctx, "/SomeStuff/GetUserTasksByTime", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -109,10 +110,10 @@ type SomeStuffServer interface {
 	CreateUser(context.Context, *CreateUserRequest) (*User, error)
 	CreateTask(context.Context, *Task) (*TaskID, error)
 	CreateTaskStage(context.Context, *CreateTaskStageRequest) (*TaskStageID, error)
-	GetTasksList(context.Context, *GetTasksListRequest) (*GetTasksListResponse, error)
+	GetTasksList(context.Context, *emptypb.Empty) (*TasksList, error)
 	SubscribeUser(context.Context, *SubscribeUserRequest) (*SubscribeUserResponse, error)
 	UnsubscribeUser(context.Context, *UnsubscribeUserRequest) (*UnsubscribeUserResponse, error)
-	GetUserTasks(context.Context, *GetUserTasksRequest) (*GetUserTasksResponse, error)
+	GetUserTasksByTime(context.Context, *GetUserTasksByTimeRequest) (*TasksList, error)
 	mustEmbedUnimplementedSomeStuffServer()
 }
 
@@ -129,7 +130,7 @@ func (UnimplementedSomeStuffServer) CreateTask(context.Context, *Task) (*TaskID,
 func (UnimplementedSomeStuffServer) CreateTaskStage(context.Context, *CreateTaskStageRequest) (*TaskStageID, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method CreateTaskStage not implemented")
 }
-func (UnimplementedSomeStuffServer) GetTasksList(context.Context, *GetTasksListRequest) (*GetTasksListResponse, error) {
+func (UnimplementedSomeStuffServer) GetTasksList(context.Context, *emptypb.Empty) (*TasksList, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetTasksList not implemented")
 }
 func (UnimplementedSomeStuffServer) SubscribeUser(context.Context, *SubscribeUserRequest) (*SubscribeUserResponse, error) {
@@ -138,8 +139,8 @@ func (UnimplementedSomeStuffServer) SubscribeUser(context.Context, *SubscribeUse
 func (UnimplementedSomeStuffServer) UnsubscribeUser(context.Context, *UnsubscribeUserRequest) (*UnsubscribeUserResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method UnsubscribeUser not implemented")
 }
-func (UnimplementedSomeStuffServer) GetUserTasks(context.Context, *GetUserTasksRequest) (*GetUserTasksResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetUserTasks not implemented")
+func (UnimplementedSomeStuffServer) GetUserTasksByTime(context.Context, *GetUserTasksByTimeRequest) (*TasksList, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetUserTasksByTime not implemented")
 }
 func (UnimplementedSomeStuffServer) mustEmbedUnimplementedSomeStuffServer() {}
 
@@ -209,7 +210,7 @@ func _SomeStuff_CreateTaskStage_Handler(srv interface{}, ctx context.Context, de
 }
 
 func _SomeStuff_GetTasksList_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetTasksListRequest)
+	in := new(emptypb.Empty)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
@@ -221,7 +222,7 @@ func _SomeStuff_GetTasksList_Handler(srv interface{}, ctx context.Context, dec f
 		FullMethod: "/SomeStuff/GetTasksList",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SomeStuffServer).GetTasksList(ctx, req.(*GetTasksListRequest))
+		return srv.(SomeStuffServer).GetTasksList(ctx, req.(*emptypb.Empty))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -262,20 +263,20 @@ func _SomeStuff_UnsubscribeUser_Handler(srv interface{}, ctx context.Context, de
 	return interceptor(ctx, in, info, handler)
 }
 
-func _SomeStuff_GetUserTasks_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetUserTasksRequest)
+func _SomeStuff_GetUserTasksByTime_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetUserTasksByTimeRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(SomeStuffServer).GetUserTasks(ctx, in)
+		return srv.(SomeStuffServer).GetUserTasksByTime(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/SomeStuff/GetUserTasks",
+		FullMethod: "/SomeStuff/GetUserTasksByTime",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(SomeStuffServer).GetUserTasks(ctx, req.(*GetUserTasksRequest))
+		return srv.(SomeStuffServer).GetUserTasksByTime(ctx, req.(*GetUserTasksByTimeRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -312,8 +313,8 @@ var SomeStuff_ServiceDesc = grpc.ServiceDesc{
 			Handler:    _SomeStuff_UnsubscribeUser_Handler,
 		},
 		{
-			MethodName: "GetUserTasks",
-			Handler:    _SomeStuff_GetUserTasks_Handler,
+			MethodName: "GetUserTasksByTime",
+			Handler:    _SomeStuff_GetUserTasksByTime_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

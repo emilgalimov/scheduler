@@ -54,13 +54,19 @@ type RepositoryMock struct {
 	beforeGetAllTasksCounter uint64
 	GetAllTasksMock          mRepositoryMockGetAllTasks
 
+	funcGetAllUserTasks          func(ctx context.Context, userID uint64) (upa1 []*models.UserTask, err error)
+	inspectFuncGetAllUserTasks   func(ctx context.Context, userID uint64)
+	afterGetAllUserTasksCounter  uint64
+	beforeGetAllUserTasksCounter uint64
+	GetAllUserTasksMock          mRepositoryMockGetAllUserTasks
+
 	funcGetTask          func(ctx context.Context, ID uint64) (tp1 *models.Task, err error)
 	inspectFuncGetTask   func(ctx context.Context, ID uint64)
 	afterGetTaskCounter  uint64
 	beforeGetTaskCounter uint64
 	GetTaskMock          mRepositoryMockGetTask
 
-	funcGetUserTask          func(ctx context.Context, userID uint64, taskID uint64) (up1 *models.UserTask, err error)
+	funcGetUserTask          func(ctx context.Context, userID uint64, taskID uint64) (upa1 []*models.UserTask, err error)
 	inspectFuncGetUserTask   func(ctx context.Context, userID uint64, taskID uint64)
 	afterGetUserTaskCounter  uint64
 	beforeGetUserTaskCounter uint64
@@ -91,6 +97,9 @@ func NewRepositoryMock(t minimock.Tester) *RepositoryMock {
 
 	m.GetAllTasksMock = mRepositoryMockGetAllTasks{mock: m}
 	m.GetAllTasksMock.callArgs = []*RepositoryMockGetAllTasksParams{}
+
+	m.GetAllUserTasksMock = mRepositoryMockGetAllUserTasks{mock: m}
+	m.GetAllUserTasksMock.callArgs = []*RepositoryMockGetAllUserTasksParams{}
 
 	m.GetTaskMock = mRepositoryMockGetTask{mock: m}
 	m.GetTaskMock.callArgs = []*RepositoryMockGetTaskParams{}
@@ -1402,6 +1411,223 @@ func (m *RepositoryMock) MinimockGetAllTasksInspect() {
 	}
 }
 
+type mRepositoryMockGetAllUserTasks struct {
+	mock               *RepositoryMock
+	defaultExpectation *RepositoryMockGetAllUserTasksExpectation
+	expectations       []*RepositoryMockGetAllUserTasksExpectation
+
+	callArgs []*RepositoryMockGetAllUserTasksParams
+	mutex    sync.RWMutex
+}
+
+// RepositoryMockGetAllUserTasksExpectation specifies expectation struct of the Repository.GetAllUserTasks
+type RepositoryMockGetAllUserTasksExpectation struct {
+	mock    *RepositoryMock
+	params  *RepositoryMockGetAllUserTasksParams
+	results *RepositoryMockGetAllUserTasksResults
+	Counter uint64
+}
+
+// RepositoryMockGetAllUserTasksParams contains parameters of the Repository.GetAllUserTasks
+type RepositoryMockGetAllUserTasksParams struct {
+	ctx    context.Context
+	userID uint64
+}
+
+// RepositoryMockGetAllUserTasksResults contains results of the Repository.GetAllUserTasks
+type RepositoryMockGetAllUserTasksResults struct {
+	upa1 []*models.UserTask
+	err  error
+}
+
+// Expect sets up expected params for Repository.GetAllUserTasks
+func (mmGetAllUserTasks *mRepositoryMockGetAllUserTasks) Expect(ctx context.Context, userID uint64) *mRepositoryMockGetAllUserTasks {
+	if mmGetAllUserTasks.mock.funcGetAllUserTasks != nil {
+		mmGetAllUserTasks.mock.t.Fatalf("RepositoryMock.GetAllUserTasks mock is already set by Set")
+	}
+
+	if mmGetAllUserTasks.defaultExpectation == nil {
+		mmGetAllUserTasks.defaultExpectation = &RepositoryMockGetAllUserTasksExpectation{}
+	}
+
+	mmGetAllUserTasks.defaultExpectation.params = &RepositoryMockGetAllUserTasksParams{ctx, userID}
+	for _, e := range mmGetAllUserTasks.expectations {
+		if minimock.Equal(e.params, mmGetAllUserTasks.defaultExpectation.params) {
+			mmGetAllUserTasks.mock.t.Fatalf("Expectation set by When has same params: %#v", *mmGetAllUserTasks.defaultExpectation.params)
+		}
+	}
+
+	return mmGetAllUserTasks
+}
+
+// Inspect accepts an inspector function that has same arguments as the Repository.GetAllUserTasks
+func (mmGetAllUserTasks *mRepositoryMockGetAllUserTasks) Inspect(f func(ctx context.Context, userID uint64)) *mRepositoryMockGetAllUserTasks {
+	if mmGetAllUserTasks.mock.inspectFuncGetAllUserTasks != nil {
+		mmGetAllUserTasks.mock.t.Fatalf("Inspect function is already set for RepositoryMock.GetAllUserTasks")
+	}
+
+	mmGetAllUserTasks.mock.inspectFuncGetAllUserTasks = f
+
+	return mmGetAllUserTasks
+}
+
+// Return sets up results that will be returned by Repository.GetAllUserTasks
+func (mmGetAllUserTasks *mRepositoryMockGetAllUserTasks) Return(upa1 []*models.UserTask, err error) *RepositoryMock {
+	if mmGetAllUserTasks.mock.funcGetAllUserTasks != nil {
+		mmGetAllUserTasks.mock.t.Fatalf("RepositoryMock.GetAllUserTasks mock is already set by Set")
+	}
+
+	if mmGetAllUserTasks.defaultExpectation == nil {
+		mmGetAllUserTasks.defaultExpectation = &RepositoryMockGetAllUserTasksExpectation{mock: mmGetAllUserTasks.mock}
+	}
+	mmGetAllUserTasks.defaultExpectation.results = &RepositoryMockGetAllUserTasksResults{upa1, err}
+	return mmGetAllUserTasks.mock
+}
+
+//Set uses given function f to mock the Repository.GetAllUserTasks method
+func (mmGetAllUserTasks *mRepositoryMockGetAllUserTasks) Set(f func(ctx context.Context, userID uint64) (upa1 []*models.UserTask, err error)) *RepositoryMock {
+	if mmGetAllUserTasks.defaultExpectation != nil {
+		mmGetAllUserTasks.mock.t.Fatalf("Default expectation is already set for the Repository.GetAllUserTasks method")
+	}
+
+	if len(mmGetAllUserTasks.expectations) > 0 {
+		mmGetAllUserTasks.mock.t.Fatalf("Some expectations are already set for the Repository.GetAllUserTasks method")
+	}
+
+	mmGetAllUserTasks.mock.funcGetAllUserTasks = f
+	return mmGetAllUserTasks.mock
+}
+
+// When sets expectation for the Repository.GetAllUserTasks which will trigger the result defined by the following
+// Then helper
+func (mmGetAllUserTasks *mRepositoryMockGetAllUserTasks) When(ctx context.Context, userID uint64) *RepositoryMockGetAllUserTasksExpectation {
+	if mmGetAllUserTasks.mock.funcGetAllUserTasks != nil {
+		mmGetAllUserTasks.mock.t.Fatalf("RepositoryMock.GetAllUserTasks mock is already set by Set")
+	}
+
+	expectation := &RepositoryMockGetAllUserTasksExpectation{
+		mock:   mmGetAllUserTasks.mock,
+		params: &RepositoryMockGetAllUserTasksParams{ctx, userID},
+	}
+	mmGetAllUserTasks.expectations = append(mmGetAllUserTasks.expectations, expectation)
+	return expectation
+}
+
+// Then sets up Repository.GetAllUserTasks return parameters for the expectation previously defined by the When method
+func (e *RepositoryMockGetAllUserTasksExpectation) Then(upa1 []*models.UserTask, err error) *RepositoryMock {
+	e.results = &RepositoryMockGetAllUserTasksResults{upa1, err}
+	return e.mock
+}
+
+// GetAllUserTasks implements Repository
+func (mmGetAllUserTasks *RepositoryMock) GetAllUserTasks(ctx context.Context, userID uint64) (upa1 []*models.UserTask, err error) {
+	mm_atomic.AddUint64(&mmGetAllUserTasks.beforeGetAllUserTasksCounter, 1)
+	defer mm_atomic.AddUint64(&mmGetAllUserTasks.afterGetAllUserTasksCounter, 1)
+
+	if mmGetAllUserTasks.inspectFuncGetAllUserTasks != nil {
+		mmGetAllUserTasks.inspectFuncGetAllUserTasks(ctx, userID)
+	}
+
+	mm_params := &RepositoryMockGetAllUserTasksParams{ctx, userID}
+
+	// Record call args
+	mmGetAllUserTasks.GetAllUserTasksMock.mutex.Lock()
+	mmGetAllUserTasks.GetAllUserTasksMock.callArgs = append(mmGetAllUserTasks.GetAllUserTasksMock.callArgs, mm_params)
+	mmGetAllUserTasks.GetAllUserTasksMock.mutex.Unlock()
+
+	for _, e := range mmGetAllUserTasks.GetAllUserTasksMock.expectations {
+		if minimock.Equal(e.params, mm_params) {
+			mm_atomic.AddUint64(&e.Counter, 1)
+			return e.results.upa1, e.results.err
+		}
+	}
+
+	if mmGetAllUserTasks.GetAllUserTasksMock.defaultExpectation != nil {
+		mm_atomic.AddUint64(&mmGetAllUserTasks.GetAllUserTasksMock.defaultExpectation.Counter, 1)
+		mm_want := mmGetAllUserTasks.GetAllUserTasksMock.defaultExpectation.params
+		mm_got := RepositoryMockGetAllUserTasksParams{ctx, userID}
+		if mm_want != nil && !minimock.Equal(*mm_want, mm_got) {
+			mmGetAllUserTasks.t.Errorf("RepositoryMock.GetAllUserTasks got unexpected parameters, want: %#v, got: %#v%s\n", *mm_want, mm_got, minimock.Diff(*mm_want, mm_got))
+		}
+
+		mm_results := mmGetAllUserTasks.GetAllUserTasksMock.defaultExpectation.results
+		if mm_results == nil {
+			mmGetAllUserTasks.t.Fatal("No results are set for the RepositoryMock.GetAllUserTasks")
+		}
+		return (*mm_results).upa1, (*mm_results).err
+	}
+	if mmGetAllUserTasks.funcGetAllUserTasks != nil {
+		return mmGetAllUserTasks.funcGetAllUserTasks(ctx, userID)
+	}
+	mmGetAllUserTasks.t.Fatalf("Unexpected call to RepositoryMock.GetAllUserTasks. %v %v", ctx, userID)
+	return
+}
+
+// GetAllUserTasksAfterCounter returns a count of finished RepositoryMock.GetAllUserTasks invocations
+func (mmGetAllUserTasks *RepositoryMock) GetAllUserTasksAfterCounter() uint64 {
+	return mm_atomic.LoadUint64(&mmGetAllUserTasks.afterGetAllUserTasksCounter)
+}
+
+// GetAllUserTasksBeforeCounter returns a count of RepositoryMock.GetAllUserTasks invocations
+func (mmGetAllUserTasks *RepositoryMock) GetAllUserTasksBeforeCounter() uint64 {
+	return mm_atomic.LoadUint64(&mmGetAllUserTasks.beforeGetAllUserTasksCounter)
+}
+
+// Calls returns a list of arguments used in each call to RepositoryMock.GetAllUserTasks.
+// The list is in the same order as the calls were made (i.e. recent calls have a higher index)
+func (mmGetAllUserTasks *mRepositoryMockGetAllUserTasks) Calls() []*RepositoryMockGetAllUserTasksParams {
+	mmGetAllUserTasks.mutex.RLock()
+
+	argCopy := make([]*RepositoryMockGetAllUserTasksParams, len(mmGetAllUserTasks.callArgs))
+	copy(argCopy, mmGetAllUserTasks.callArgs)
+
+	mmGetAllUserTasks.mutex.RUnlock()
+
+	return argCopy
+}
+
+// MinimockGetAllUserTasksDone returns true if the count of the GetAllUserTasks invocations corresponds
+// the number of defined expectations
+func (m *RepositoryMock) MinimockGetAllUserTasksDone() bool {
+	for _, e := range m.GetAllUserTasksMock.expectations {
+		if mm_atomic.LoadUint64(&e.Counter) < 1 {
+			return false
+		}
+	}
+
+	// if default expectation was set then invocations count should be greater than zero
+	if m.GetAllUserTasksMock.defaultExpectation != nil && mm_atomic.LoadUint64(&m.afterGetAllUserTasksCounter) < 1 {
+		return false
+	}
+	// if func was set then invocations count should be greater than zero
+	if m.funcGetAllUserTasks != nil && mm_atomic.LoadUint64(&m.afterGetAllUserTasksCounter) < 1 {
+		return false
+	}
+	return true
+}
+
+// MinimockGetAllUserTasksInspect logs each unmet expectation
+func (m *RepositoryMock) MinimockGetAllUserTasksInspect() {
+	for _, e := range m.GetAllUserTasksMock.expectations {
+		if mm_atomic.LoadUint64(&e.Counter) < 1 {
+			m.t.Errorf("Expected call to RepositoryMock.GetAllUserTasks with params: %#v", *e.params)
+		}
+	}
+
+	// if default expectation was set then invocations count should be greater than zero
+	if m.GetAllUserTasksMock.defaultExpectation != nil && mm_atomic.LoadUint64(&m.afterGetAllUserTasksCounter) < 1 {
+		if m.GetAllUserTasksMock.defaultExpectation.params == nil {
+			m.t.Error("Expected call to RepositoryMock.GetAllUserTasks")
+		} else {
+			m.t.Errorf("Expected call to RepositoryMock.GetAllUserTasks with params: %#v", *m.GetAllUserTasksMock.defaultExpectation.params)
+		}
+	}
+	// if func was set then invocations count should be greater than zero
+	if m.funcGetAllUserTasks != nil && mm_atomic.LoadUint64(&m.afterGetAllUserTasksCounter) < 1 {
+		m.t.Error("Expected call to RepositoryMock.GetAllUserTasks")
+	}
+}
+
 type mRepositoryMockGetTask struct {
 	mock               *RepositoryMock
 	defaultExpectation *RepositoryMockGetTaskExpectation
@@ -1645,8 +1871,8 @@ type RepositoryMockGetUserTaskParams struct {
 
 // RepositoryMockGetUserTaskResults contains results of the Repository.GetUserTask
 type RepositoryMockGetUserTaskResults struct {
-	up1 *models.UserTask
-	err error
+	upa1 []*models.UserTask
+	err  error
 }
 
 // Expect sets up expected params for Repository.GetUserTask
@@ -1681,7 +1907,7 @@ func (mmGetUserTask *mRepositoryMockGetUserTask) Inspect(f func(ctx context.Cont
 }
 
 // Return sets up results that will be returned by Repository.GetUserTask
-func (mmGetUserTask *mRepositoryMockGetUserTask) Return(up1 *models.UserTask, err error) *RepositoryMock {
+func (mmGetUserTask *mRepositoryMockGetUserTask) Return(upa1 []*models.UserTask, err error) *RepositoryMock {
 	if mmGetUserTask.mock.funcGetUserTask != nil {
 		mmGetUserTask.mock.t.Fatalf("RepositoryMock.GetUserTask mock is already set by Set")
 	}
@@ -1689,12 +1915,12 @@ func (mmGetUserTask *mRepositoryMockGetUserTask) Return(up1 *models.UserTask, er
 	if mmGetUserTask.defaultExpectation == nil {
 		mmGetUserTask.defaultExpectation = &RepositoryMockGetUserTaskExpectation{mock: mmGetUserTask.mock}
 	}
-	mmGetUserTask.defaultExpectation.results = &RepositoryMockGetUserTaskResults{up1, err}
+	mmGetUserTask.defaultExpectation.results = &RepositoryMockGetUserTaskResults{upa1, err}
 	return mmGetUserTask.mock
 }
 
 //Set uses given function f to mock the Repository.GetUserTask method
-func (mmGetUserTask *mRepositoryMockGetUserTask) Set(f func(ctx context.Context, userID uint64, taskID uint64) (up1 *models.UserTask, err error)) *RepositoryMock {
+func (mmGetUserTask *mRepositoryMockGetUserTask) Set(f func(ctx context.Context, userID uint64, taskID uint64) (upa1 []*models.UserTask, err error)) *RepositoryMock {
 	if mmGetUserTask.defaultExpectation != nil {
 		mmGetUserTask.mock.t.Fatalf("Default expectation is already set for the Repository.GetUserTask method")
 	}
@@ -1723,13 +1949,13 @@ func (mmGetUserTask *mRepositoryMockGetUserTask) When(ctx context.Context, userI
 }
 
 // Then sets up Repository.GetUserTask return parameters for the expectation previously defined by the When method
-func (e *RepositoryMockGetUserTaskExpectation) Then(up1 *models.UserTask, err error) *RepositoryMock {
-	e.results = &RepositoryMockGetUserTaskResults{up1, err}
+func (e *RepositoryMockGetUserTaskExpectation) Then(upa1 []*models.UserTask, err error) *RepositoryMock {
+	e.results = &RepositoryMockGetUserTaskResults{upa1, err}
 	return e.mock
 }
 
 // GetUserTask implements Repository
-func (mmGetUserTask *RepositoryMock) GetUserTask(ctx context.Context, userID uint64, taskID uint64) (up1 *models.UserTask, err error) {
+func (mmGetUserTask *RepositoryMock) GetUserTask(ctx context.Context, userID uint64, taskID uint64) (upa1 []*models.UserTask, err error) {
 	mm_atomic.AddUint64(&mmGetUserTask.beforeGetUserTaskCounter, 1)
 	defer mm_atomic.AddUint64(&mmGetUserTask.afterGetUserTaskCounter, 1)
 
@@ -1747,7 +1973,7 @@ func (mmGetUserTask *RepositoryMock) GetUserTask(ctx context.Context, userID uin
 	for _, e := range mmGetUserTask.GetUserTaskMock.expectations {
 		if minimock.Equal(e.params, mm_params) {
 			mm_atomic.AddUint64(&e.Counter, 1)
-			return e.results.up1, e.results.err
+			return e.results.upa1, e.results.err
 		}
 	}
 
@@ -1763,7 +1989,7 @@ func (mmGetUserTask *RepositoryMock) GetUserTask(ctx context.Context, userID uin
 		if mm_results == nil {
 			mmGetUserTask.t.Fatal("No results are set for the RepositoryMock.GetUserTask")
 		}
-		return (*mm_results).up1, (*mm_results).err
+		return (*mm_results).upa1, (*mm_results).err
 	}
 	if mmGetUserTask.funcGetUserTask != nil {
 		return mmGetUserTask.funcGetUserTask(ctx, userID, taskID)
@@ -1852,6 +2078,8 @@ func (m *RepositoryMock) MinimockFinish() {
 
 		m.MinimockGetAllTasksInspect()
 
+		m.MinimockGetAllUserTasksInspect()
+
 		m.MinimockGetTaskInspect()
 
 		m.MinimockGetUserTaskInspect()
@@ -1884,6 +2112,7 @@ func (m *RepositoryMock) minimockDone() bool {
 		m.MinimockCreateUserTaskDone() &&
 		m.MinimockDeleteUserTaskDone() &&
 		m.MinimockGetAllTasksDone() &&
+		m.MinimockGetAllUserTasksDone() &&
 		m.MinimockGetTaskDone() &&
 		m.MinimockGetUserTaskDone()
 }

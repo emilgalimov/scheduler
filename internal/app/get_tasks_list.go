@@ -6,10 +6,10 @@ import (
 	pb "gitlab.ozon.dev/emilgalimov/homework-2/pkg/api/v1"
 )
 
-func (t *tserver) GetTasksList(ctx context.Context, rq *pb.GetTasksListRequest) (*pb.GetTasksListResponse, error) {
+func (t *tserver) GetTasksList(ctx context.Context) (*pb.TasksList, error) {
 	tasks, err := t.repo.GetAllTasks(ctx)
 
-	tasksToResponse := &pb.GetTasksListResponse{
+	tasksToResponse := &pb.TasksList{
 		Tasks: nil,
 	}
 

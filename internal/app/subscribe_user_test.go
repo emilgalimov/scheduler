@@ -15,6 +15,7 @@ func TestTserver_SubscribeUser(t *testing.T) {
 	mc := minimock.NewController(t)
 	defer mc.Finish()
 	mockRepo := NewRepositoryMock(mc)
+
 	mockRepo.CreateUserTaskMock.Return(nil)
 	mockRepo.GetTaskMock.Return(&models.Task{}, nil)
 	mockRepo.GetUserTaskMock.Return(nil, nil)
@@ -71,7 +72,7 @@ func TestTserver_SubscribeUserReturnsErrorWhenUserAlreadySubscribed(t *testing.T
 
 	mockRepo := NewRepositoryMock(mc)
 	mockRepo.GetTaskMock.Return(&models.Task{}, nil)
-	mockRepo.GetUserTaskMock.Return(&models.UserTask{}, nil)
+	mockRepo.GetUserTaskMock.Return([]*models.UserTask{}, nil)
 
 	svc := NewServer(mockRepo)
 

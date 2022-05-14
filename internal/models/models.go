@@ -24,7 +24,7 @@ type TaskStage struct {
 }
 
 type UserTask struct {
-	user      User
-	task      Task
-	startTime time.Time
+	User      *User
+	Task      *Task
+	StartTime time.Time
 }
