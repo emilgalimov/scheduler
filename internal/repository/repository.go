@@ -199,7 +199,11 @@ func (r *TasksRepository) GetAllUserTasks(ctx context.Context, userID uint64) (u
 	return userTasks, nil
 }
 
-func (TasksRepository) DeleteUserTask(ctx context.Context, userID uint64, taskID uint64) error {
-	//TODO implement me
-	panic("implement me")
+func (r *TasksRepository) DeleteUserTask(ctx context.Context, userID uint64, taskID uint64) (err error) {
+	//language=SQL
+	const sql = `DELETE FROM user_tasks WHERE user_id = $1 AND task_id = $2`
+
+	r.pool.QueryRow(ctx, sql, userID, taskID)
+
+	return
 }
