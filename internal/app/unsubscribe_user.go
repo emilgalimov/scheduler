@@ -9,6 +9,8 @@ import (
 
 func (t *tserver) UnsubscribeUser(ctx context.Context, req *pb.UnsubscribeUserRequest) (*pb.UnsubscribeUserResponse, error) {
 
+	//TODO добавить проверку наличия пользователя
+
 	if _, err := t.repo.GetTask(ctx, req.TaskID); err != nil {
 		return nil, status.Errorf(codes.NotFound, "task with ID %v not found", req.TaskID)
 	}

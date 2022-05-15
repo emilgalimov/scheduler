@@ -9,6 +9,8 @@ import (
 
 func (t *tserver) SubscribeUser(ctx context.Context, req *pb.SubscribeUserRequest) (*pb.SubscribeUserResponse, error) {
 
+	//TODO добавить проверку наличия пользователя
+
 	if _, err := t.repo.GetTask(ctx, req.TaskID); err != nil {
 		return nil, status.Errorf(codes.NotFound, "task with ID %v not found", req.TaskID)
 	}

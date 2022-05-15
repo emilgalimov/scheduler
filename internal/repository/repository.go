@@ -174,9 +174,29 @@ func (r *TasksRepository) GetUserTask(ctx context.Context, userID uint64, taskID
 	return userTask, err
 }
 
-func (TasksRepository) GetAllUserTasks(ctx context.Context, userID uint64) ([]models.UserTask, error) {
-	//TODO implement me
-	panic("implement me")
+func (r *TasksRepository) GetAllUserTasks(ctx context.Context, userID uint64) (userTasks []models.UserTask, err error) {
+	//language=SQL
+	const sql = "SELECT task_id, start_time FROM user_tasks WHERE user_id = $1"
+
+	row, _ := r.pool.Query(ctx, sql, userID)
+
+	for row.Next() {
+		values, _ := row.Values()
+
+		task, errTask := r.GetTask(ctx, uint64(values[0].(int64)))
+		if errTask != nil {
+			return nil, errTask
+		}
+
+		userTasks = append(userTasks, models.UserTask{
+			User:      models.User{ID: userID},
+			Task:      task,
+			StartTime: values[1].(time.Time),
+		})
+
+	}
+
+	return userTasks, nil
 }
 
 func (TasksRepository) DeleteUserTask(ctx context.Context, userID uint64, taskID uint64) error {
