@@ -1,15 +1,10 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
-import "google/protobuf/empty.proto";
 
 option go_package = "gitlab.ozon.dev/emilgalimov/homework-2/api";
 
 message User {
-  uint64 ID = 1;
-}
-
-message UserID {
   uint64 ID = 1;
 }
 
@@ -47,6 +42,8 @@ message UnsubscribeUserResponse{
   bool isUnsubscribed = 1;
 }
 
+message GetTasksListRequest{
+}
 message TasksList{
   repeated Task tasks = 1;
 }
@@ -84,7 +81,7 @@ service SomeStuff {
   rpc CreateTask(Task) returns (TaskID) {}
   rpc CreateTaskStage(CreateTaskStageRequest) returns (TaskStageID) {}
 
-  rpc GetTasksList(google.protobuf.Empty) returns (TasksList) {}
+  rpc GetTasksList(GetTasksListRequest) returns (TasksList) {}
 
   rpc SubscribeUser(SubscribeUserRequest) returns (SubscribeUserResponse){}
   rpc UnsubscribeUser(UnsubscribeUserRequest) returns (UnsubscribeUserResponse){}

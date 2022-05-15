@@ -6,7 +6,7 @@ import (
 	pb "gitlab.ozon.dev/emilgalimov/homework-2/pkg/api/v1"
 )
 
-func (t *tserver) GetTasksList(ctx context.Context) (*pb.TasksList, error) {
+func (t *tserver) GetTasksList(ctx context.Context, _ *pb.GetTasksListRequest) (*pb.TasksList, error) {
 	tasks, err := t.repo.GetAllTasks(ctx)
 
 	tasksToResponse := &pb.TasksList{

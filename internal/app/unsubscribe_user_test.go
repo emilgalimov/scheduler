@@ -20,7 +20,7 @@ func TestTserver_UnsubscribeUser(t *testing.T) {
 
 	userID := uint64(1)
 	taskID := uint64(1)
-	mockRepo.GetTaskMock.Expect(ctx, taskID).Return(&models.Task{}, nil)
+	mockRepo.GetTaskMock.Expect(ctx, taskID).Return(models.Task{}, nil)
 	mockRepo.GetUserTaskMock.Expect(ctx, userID, taskID).Return([]*models.UserTask{}, nil)
 	mockRepo.DeleteUserTaskMock.Expect(ctx, userID, taskID).Return(nil)
 
@@ -41,7 +41,7 @@ func TestTserver_UnsubscribeUserReturnRepoError(t *testing.T) {
 
 	userID := uint64(1)
 	taskID := uint64(1)
-	mockRepo.GetTaskMock.Expect(ctx, taskID).Return(&models.Task{}, nil)
+	mockRepo.GetTaskMock.Expect(ctx, taskID).Return(models.Task{}, nil)
 	mockRepo.GetUserTaskMock.Expect(ctx, userID, taskID).Return([]*models.UserTask{}, nil)
 	mockRepo.DeleteUserTaskMock.Expect(ctx, userID, taskID).Return(errors.New("repo error"))
 
@@ -61,7 +61,7 @@ func TestTserver_UnsubscribeUserReturnsErrorWhenTaskNotExists(t *testing.T) {
 
 	userID := uint64(1)
 	taskID := uint64(1)
-	mockRepo.GetTaskMock.Expect(ctx, taskID).Return(nil, errors.New("not found"))
+	mockRepo.GetTaskMock.Expect(ctx, taskID).Return(models.Task{}, errors.New("not found"))
 
 	svc := NewServer(mockRepo)
 	response, err := svc.UnsubscribeUser(ctx, &pb.UnsubscribeUserRequest{UserID: userID, TaskID: taskID})
@@ -79,7 +79,7 @@ func TestTserver_UnsubscribeUserReturnErrorWhenUserNotSubscribed(t *testing.T) {
 
 	userID := uint64(1)
 	taskID := uint64(1)
-	mockRepo.GetTaskMock.Expect(ctx, taskID).Return(&models.Task{}, nil)
+	mockRepo.GetTaskMock.Expect(ctx, taskID).Return(models.Task{}, nil)
 	mockRepo.GetUserTaskMock.Expect(ctx, userID, taskID).Return(nil, errors.New("not found"))
 
 	svc := NewServer(mockRepo)

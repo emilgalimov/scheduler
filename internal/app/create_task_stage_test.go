@@ -19,7 +19,7 @@ func TestTserver_CreateTaskStage(t *testing.T) {
 
 	mockRepo := NewRepositoryMock(mc)
 	mockRepo.CreateTaskStageMock.Return(1, nil)
-	mockRepo.GetTaskMock.Return(&models.Task{}, nil)
+	mockRepo.GetTaskMock.Return(models.Task{}, nil)
 
 	svc := NewServer(mockRepo)
 
@@ -40,7 +40,7 @@ func TestTserver_ReturnsErrorWhenTaskNotFound(t *testing.T) {
 	ctx := context.Background()
 
 	mockRepo := NewRepositoryMock(mc)
-	mockRepo.GetTaskMock.Return(nil, errors.New("test"))
+	mockRepo.GetTaskMock.Return(models.Task{}, errors.New("test"))
 
 	svc := NewServer(mockRepo)
 

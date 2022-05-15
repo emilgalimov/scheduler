@@ -16,10 +16,11 @@ func TestTserver_CreateUser(t *testing.T) {
 	mockRepo := NewRepositoryMock(mc)
 	mockRepo.CreateUserMock.Return(1, nil)
 	ctx := context.Background()
+
 	svc := NewServer(mockRepo)
 
-	UserID, err := svc.CreateUser(ctx, &pb.CreateUserRequest{})
+	User, err := svc.CreateUser(ctx, &pb.CreateUserRequest{})
 
 	assert.Nil(t, err)
-	assert.Equal(t, uint64(1), UserID.ID)
+	assert.Equal(t, uint64(1), User.ID)
 }
