@@ -21,13 +21,13 @@ func TestTserver_GetUserTasksByTime(t *testing.T) {
 	userID := uint64(1)
 
 	startTime, _ := time.Parse(time.RFC3339, "2022-05-10T10:00:00Z")
-	mockRepo.GetAllUserTasksMock.Expect(ctx, userID).Return([]*models.UserTask{
+	mockRepo.GetAllUserTasksMock.Expect(ctx, userID).Return([]models.UserTask{
 		{
-			Task: &models.Task{
+			Task: models.Task{
 				ID:          1,
 				Name:        "name",
 				Description: "description",
-				Stages: []*models.TaskStage{
+				Stages: []models.TaskStage{
 					{
 						ID:               1,
 						Name:             "first",
@@ -51,7 +51,7 @@ func TestTserver_GetUserTasksByTime(t *testing.T) {
 					},
 				},
 			},
-			User: &models.User{
+			User: models.User{
 				ID: 1,
 			},
 			StartTime: startTime,

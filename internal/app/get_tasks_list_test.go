@@ -16,12 +16,12 @@ func TestTserver_GetTasksList(t *testing.T) {
 
 	mockRepo := NewRepositoryMock(mc)
 
-	mockRepo.GetAllTasksMock.Return([]*models.Task{
+	mockRepo.GetAllTasksMock.Return([]models.Task{
 		{
 			ID:          1,
 			Name:        "name",
 			Description: "description",
-			Stages: []*models.TaskStage{
+			Stages: []models.TaskStage{
 				{
 					ID:               1,
 					Name:             "nam",

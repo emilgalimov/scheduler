@@ -18,7 +18,7 @@ func (t *tserver) GetTasksList(ctx context.Context, _ *pb.GetTasksListRequest) (
 	return tasksToResponse, err
 }
 
-func makeTasksResponseFromTasks(tasks []*models.Task) []*pb.Task {
+func makeTasksResponseFromTasks(tasks []models.Task) []*pb.Task {
 	var toReturn []*pb.Task
 	for _, t := range tasks {
 		var taskStagesToReturn []*pb.TaskStage

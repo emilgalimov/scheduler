@@ -57,7 +57,7 @@ func (r *TasksRepository) CreateTaskStage(ctx context.Context, taskStage models.
 	return
 }
 
-func (TasksRepository) GetAllTasks(ctx context.Context) ([]*models.Task, error) {
+func (TasksRepository) GetAllTasks(ctx context.Context) ([]models.Task, error) {
 	//TODO implement me
 	panic("implement me")
 }
@@ -67,12 +67,12 @@ func (TasksRepository) CreateUserTask(ctx context.Context, userID uint64, taskID
 	panic("implement me")
 }
 
-func (TasksRepository) GetUserTask(ctx context.Context, userID uint64, taskID uint64) ([]*models.UserTask, error) {
+func (TasksRepository) GetUserTask(ctx context.Context, userID uint64, taskID uint64) ([]models.UserTask, error) {
 	//TODO implement me
 	panic("implement me")
 }
 
-func (TasksRepository) GetAllUserTasks(ctx context.Context, userID uint64) ([]*models.UserTask, error) {
+func (TasksRepository) GetAllUserTasks(ctx context.Context, userID uint64) ([]models.UserTask, error) {
 	//TODO implement me
 	panic("implement me")
 }

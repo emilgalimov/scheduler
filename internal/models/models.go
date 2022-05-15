@@ -12,7 +12,7 @@ type Task struct {
 	ID          uint64
 	Name        string
 	Description string
-	Stages      []*TaskStage
+	Stages      []TaskStage
 }
 
 type TaskStage struct {
@@ -24,7 +24,7 @@ type TaskStage struct {
 }
 
 type UserTask struct {
-	User      *User
-	Task      *Task
+	User      User
+	Task      Task
 	StartTime time.Time
 }

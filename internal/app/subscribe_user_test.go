@@ -72,7 +72,7 @@ func TestTserver_SubscribeUserReturnsErrorWhenUserAlreadySubscribed(t *testing.T
 
 	mockRepo := NewRepositoryMock(mc)
 	mockRepo.GetTaskMock.Return(models.Task{}, nil)
-	mockRepo.GetUserTaskMock.Return([]*models.UserTask{}, nil)
+	mockRepo.GetUserTaskMock.Return([]models.UserTask{}, nil)
 
 	svc := NewServer(mockRepo)
 
