@@ -13,7 +13,7 @@ func (t *tserver) UnsubscribeUser(ctx context.Context, req *pb.UnsubscribeUserRe
 		return nil, status.Errorf(codes.NotFound, "task with ID %v not found", req.TaskID)
 	}
 
-	if ut, _ := t.repo.GetUserTask(ctx, req.UserID, req.TaskID); ut == nil {
+	if _, err := t.repo.GetUserTask(ctx, req.UserID, req.TaskID); err != nil {
 		return nil, status.Errorf(codes.NotFound, "user not subscribed")
 	}
 

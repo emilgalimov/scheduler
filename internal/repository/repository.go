@@ -140,14 +140,38 @@ func (r *TasksRepository) GetAllTasks(ctx context.Context) (tasks []models.Task,
 	return tasks, err
 }
 
-func (TasksRepository) CreateUserTask(ctx context.Context, userID uint64, taskID uint64) error {
-	//TODO implement me
-	panic("implement me")
+func (r *TasksRepository) CreateUserTask(ctx context.Context, userID uint64, taskID uint64) (err error) {
+	//language=SQL
+	const sql = `INSERT INTO 
+		user_tasks(user_id, task_id, start_time) 
+		VALUES ($1, $2, now())
+		`
+
+	r.pool.QueryRow(ctx, sql, userID, taskID)
+
+	return
 }
 
-func (TasksRepository) GetUserTask(ctx context.Context, userID uint64, taskID uint64) ([]models.UserTask, error) {
-	//TODO implement me
-	panic("implement me")
+func (r *TasksRepository) GetUserTask(ctx context.Context, userID uint64, taskID uint64) (userTask models.UserTask, err error) {
+	//language=SQL
+	const sql = `SELECT start_time FROM user_tasks WHERE user_id = $1 AND task_id = $2`
+
+	err = r.pool.QueryRow(ctx, sql, userID, taskID).Scan(&userTask.StartTime)
+
+	if err != nil {
+		return models.UserTask{}, err
+	}
+
+	task, err := r.GetTask(ctx, taskID)
+
+	if err != nil {
+		return models.UserTask{}, err
+	}
+	userTask.Task = task
+
+	userTask.User = models.User{ID: userID}
+
+	return userTask, err
 }
 
 func (TasksRepository) GetAllUserTasks(ctx context.Context, userID uint64) ([]models.UserTask, error) {

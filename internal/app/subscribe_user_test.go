@@ -18,7 +18,7 @@ func TestTserver_SubscribeUser(t *testing.T) {
 
 	mockRepo.CreateUserTaskMock.Return(nil)
 	mockRepo.GetTaskMock.Return(models.Task{}, nil)
-	mockRepo.GetUserTaskMock.Return(nil, nil)
+	mockRepo.GetUserTaskMock.Return(models.UserTask{}, errors.New("not found"))
 
 	ctx := context.Background()
 	svc := NewServer(mockRepo)
@@ -36,7 +36,7 @@ func TestTserver_SubscribeUserReturnsRepoError(t *testing.T) {
 	mockRepo := NewRepositoryMock(mc)
 	mockRepo.CreateUserTaskMock.Return(errors.New("repo error"))
 	mockRepo.GetTaskMock.Return(models.Task{}, nil)
-	mockRepo.GetUserTaskMock.Return(nil, nil)
+	mockRepo.GetUserTaskMock.Return(models.UserTask{}, errors.New("not found"))
 
 	ctx := context.Background()
 	svc := NewServer(mockRepo)
@@ -72,7 +72,7 @@ func TestTserver_SubscribeUserReturnsErrorWhenUserAlreadySubscribed(t *testing.T
 
 	mockRepo := NewRepositoryMock(mc)
 	mockRepo.GetTaskMock.Return(models.Task{}, nil)
-	mockRepo.GetUserTaskMock.Return([]models.UserTask{}, nil)
+	mockRepo.GetUserTaskMock.Return(models.UserTask{}, nil)
 
 	svc := NewServer(mockRepo)
 

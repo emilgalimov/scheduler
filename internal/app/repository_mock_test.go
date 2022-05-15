@@ -66,7 +66,7 @@ type RepositoryMock struct {
 	beforeGetTaskCounter uint64
 	GetTaskMock          mRepositoryMockGetTask
 
-	funcGetUserTask          func(ctx context.Context, userID uint64, taskID uint64) (ua1 []models.UserTask, err error)
+	funcGetUserTask          func(ctx context.Context, userID uint64, taskID uint64) (u1 models.UserTask, err error)
 	inspectFuncGetUserTask   func(ctx context.Context, userID uint64, taskID uint64)
 	afterGetUserTaskCounter  uint64
 	beforeGetUserTaskCounter uint64
@@ -1871,7 +1871,7 @@ type RepositoryMockGetUserTaskParams struct {
 
 // RepositoryMockGetUserTaskResults contains results of the Repository.GetUserTask
 type RepositoryMockGetUserTaskResults struct {
-	ua1 []models.UserTask
+	u1  models.UserTask
 	err error
 }
 
@@ -1907,7 +1907,7 @@ func (mmGetUserTask *mRepositoryMockGetUserTask) Inspect(f func(ctx context.Cont
 }
 
 // Return sets up results that will be returned by Repository.GetUserTask
-func (mmGetUserTask *mRepositoryMockGetUserTask) Return(ua1 []models.UserTask, err error) *RepositoryMock {
+func (mmGetUserTask *mRepositoryMockGetUserTask) Return(u1 models.UserTask, err error) *RepositoryMock {
 	if mmGetUserTask.mock.funcGetUserTask != nil {
 		mmGetUserTask.mock.t.Fatalf("RepositoryMock.GetUserTask mock is already set by Set")
 	}
@@ -1915,12 +1915,12 @@ func (mmGetUserTask *mRepositoryMockGetUserTask) Return(ua1 []models.UserTask, e
 	if mmGetUserTask.defaultExpectation == nil {
 		mmGetUserTask.defaultExpectation = &RepositoryMockGetUserTaskExpectation{mock: mmGetUserTask.mock}
 	}
-	mmGetUserTask.defaultExpectation.results = &RepositoryMockGetUserTaskResults{ua1, err}
+	mmGetUserTask.defaultExpectation.results = &RepositoryMockGetUserTaskResults{u1, err}
 	return mmGetUserTask.mock
 }
 
 //Set uses given function f to mock the Repository.GetUserTask method
-func (mmGetUserTask *mRepositoryMockGetUserTask) Set(f func(ctx context.Context, userID uint64, taskID uint64) (ua1 []models.UserTask, err error)) *RepositoryMock {
+func (mmGetUserTask *mRepositoryMockGetUserTask) Set(f func(ctx context.Context, userID uint64, taskID uint64) (u1 models.UserTask, err error)) *RepositoryMock {
 	if mmGetUserTask.defaultExpectation != nil {
 		mmGetUserTask.mock.t.Fatalf("Default expectation is already set for the Repository.GetUserTask method")
 	}
@@ -1949,13 +1949,13 @@ func (mmGetUserTask *mRepositoryMockGetUserTask) When(ctx context.Context, userI
 }
 
 // Then sets up Repository.GetUserTask return parameters for the expectation previously defined by the When method
-func (e *RepositoryMockGetUserTaskExpectation) Then(ua1 []models.UserTask, err error) *RepositoryMock {
-	e.results = &RepositoryMockGetUserTaskResults{ua1, err}
+func (e *RepositoryMockGetUserTaskExpectation) Then(u1 models.UserTask, err error) *RepositoryMock {
+	e.results = &RepositoryMockGetUserTaskResults{u1, err}
 	return e.mock
 }
 
 // GetUserTask implements Repository
-func (mmGetUserTask *RepositoryMock) GetUserTask(ctx context.Context, userID uint64, taskID uint64) (ua1 []models.UserTask, err error) {
+func (mmGetUserTask *RepositoryMock) GetUserTask(ctx context.Context, userID uint64, taskID uint64) (u1 models.UserTask, err error) {
 	mm_atomic.AddUint64(&mmGetUserTask.beforeGetUserTaskCounter, 1)
 	defer mm_atomic.AddUint64(&mmGetUserTask.afterGetUserTaskCounter, 1)
 
@@ -1973,7 +1973,7 @@ func (mmGetUserTask *RepositoryMock) GetUserTask(ctx context.Context, userID uin
 	for _, e := range mmGetUserTask.GetUserTaskMock.expectations {
 		if minimock.Equal(e.params, mm_params) {
 			mm_atomic.AddUint64(&e.Counter, 1)
-			return e.results.ua1, e.results.err
+			return e.results.u1, e.results.err
 		}
 	}
 
@@ -1989,7 +1989,7 @@ func (mmGetUserTask *RepositoryMock) GetUserTask(ctx context.Context, userID uin
 		if mm_results == nil {
 			mmGetUserTask.t.Fatal("No results are set for the RepositoryMock.GetUserTask")
 		}
-		return (*mm_results).ua1, (*mm_results).err
+		return (*mm_results).u1, (*mm_results).err
 	}
 	if mmGetUserTask.funcGetUserTask != nil {
 		return mmGetUserTask.funcGetUserTask(ctx, userID, taskID)
