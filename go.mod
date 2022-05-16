@@ -6,6 +6,7 @@ require (
 	github.com/gojuno/minimock/v3 v3.0.10
 	github.com/jackc/pgx/v4 v4.16.1
 	github.com/stretchr/testify v1.7.0
+	gitlab.ozon.dev/emilgalimov/homework-2/pkg/api v0.0.1
 	google.golang.org/grpc v1.46.0
 	google.golang.org/protobuf v1.28.0
 )
@@ -29,3 +30,5 @@ require (
 	google.golang.org/genproto v0.0.0-20200526211855-cb27e3aa2013 // indirect
 	gopkg.in/yaml.v3 v3.0.0-20210107192922-496545a6307b // indirect
 )
+
+replace gitlab.ozon.dev/emilgalimov/homework-2/pkg/api => ./pkg/api
