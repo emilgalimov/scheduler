@@ -11,6 +11,7 @@ require (
 	gitlab.ozon.dev/emilgalimov/homework-2/pkg/api v0.0.1
 	google.golang.org/grpc v1.46.2
 	google.golang.org/protobuf v1.28.0
+	gopkg.in/yaml.v2 v2.2.3
 )
 
 require (

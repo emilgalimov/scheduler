@@ -2,6 +2,7 @@ package main
 
 import (
 	"context"
+	"fmt"
 	"github.com/jackc/pgx/v4/pgxpool"
 	"gitlab.ozon.dev/emilgalimov/homework-2/internal/app"
 	"gitlab.ozon.dev/emilgalimov/homework-2/internal/repository"
@@ -12,9 +13,26 @@ import (
 )
 
 func main() {
+
+	cfg, err := NewConfig("/app/config.yaml")
+	if err != nil {
+		panic(fmt.Sprint("error load config ", err))
+	}
+
 	ctx := context.Background()
 
-	conn, _ := pgxpool.Connect(ctx, "postgres://user:pass@postgres:5432/tasks")
+	//conn, _ := pgxpool.Connect(ctx, "postgres://user:pass@postgres:5432/tasks")
+	connectString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
+		cfg.Postgres.User,
+		cfg.Postgres.Password,
+		cfg.Postgres.Host,
+		cfg.Postgres.Port,
+		cfg.Postgres.DbName,
+	)
+
+	print(connectString)
+	conn, _ := pgxpool.Connect(ctx, connectString)
+
 	if err := conn.Ping(ctx); err != nil {
 		log.Fatal("error pinging db: ", err)
 	}
