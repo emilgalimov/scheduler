@@ -1,4 +1,5 @@
-.PHONY: gen
+#!/bin/bash
+
 gen:
 	buf generate
 
@@ -8,3 +9,7 @@ repomock:
 run:
 	go mod tidy
 	go run cmd/server/main.go
+
+migrate:
+	cd migrations
+	goose postgres "user=${DB_USER} password=${DB_PASSWORD} dbname=${DB_NAME} sslmode=disable" up
