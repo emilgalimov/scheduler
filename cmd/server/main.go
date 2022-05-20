@@ -14,14 +14,14 @@ import (
 func main() {
 	ctx := context.Background()
 
-	conn, _ := pgxpool.Connect(ctx, "postgres://user:pass@localhost:5432/tasks")
+	conn, _ := pgxpool.Connect(ctx, "postgres://user:pass@postgres:5432/tasks")
 	if err := conn.Ping(ctx); err != nil {
 		log.Fatal("error pinging db: ", err)
 	}
 
 	repo := repository.NewTasksRepository(conn)
 
-	lis, err := net.Listen("tcp", "localhost:8080")
+	lis, err := net.Listen("tcp", "0.0.0.0:8080")
 	if err != nil {
 		log.Fatalf("failed to listen: %v", err)
 	}

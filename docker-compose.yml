@@ -17,3 +17,25 @@ services:
       - '${DB_HOST}:5432:5432'
     networks:
       - hw2
+  grpc-server:
+    restart: always
+    depends_on:
+      - postgres
+    build:
+      context: .
+      dockerfile: docker/grpc_server/Dockerfile
+    ports:
+      - "8080:8080"
+    networks:
+      - hw2
+  grpc-gateway:
+    restart: always
+    depends_on:
+      - grpc-server
+    build:
+      context: .
+      dockerfile: docker/grpc_gateway/Dockerfile
+    ports:
+      - "8081:8081"
+    networks:
+      - hw2

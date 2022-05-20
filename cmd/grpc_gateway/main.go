@@ -14,7 +14,7 @@ import (
 )
 
 var (
-	grpcServerEndpoint = flag.String("grpc-server-endpoint", "localhost:8080", "gRPC server endpoint")
+	grpcServerEndpoint = flag.String("grpc-server-endpoint", "grpc-server:8080", "gRPC server endpoint")
 )
 
 func main() {
