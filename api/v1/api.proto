@@ -1,6 +1,7 @@
 syntax = "proto3";
 
 import "google/protobuf/timestamp.proto";
+import "google/api/annotations.proto";
 
 option go_package = "gitlab.ozon.dev/emilgalimov/homework-2/api";
 
@@ -75,18 +76,53 @@ message GetUserTasksByTimeRequest {
   google.protobuf.Timestamp timeTo = 3;
 }
 
-service SomeStuff {
+service SmartCalendar {
+  rpc CreateUser(CreateUserRequest) returns (User) {
+    option (google.api.http) = {
+      post: "/v1/user/create"
+    };
+  }
 
-  rpc CreateUser(CreateUserRequest) returns (User) {}
-  rpc CreateTask(Task) returns (TaskID) {}
-  rpc CreateTaskStage(CreateTaskStageRequest) returns (TaskStageID) {}
+  rpc CreateTask(Task) returns (TaskID) {
+    option (google.api.http) = {
+      post: "/v1/task/create",
+      body: "*"
+    };
+  }
 
-  rpc GetTasksList(GetTasksListRequest) returns (TasksList) {}
+  rpc CreateTaskStage(CreateTaskStageRequest) returns (TaskStageID) {
+    option (google.api.http) = {
+      post: "/v1/task-stage/create",
+      body: "*"
+    };
+  }
 
-  rpc SubscribeUser(SubscribeUserRequest) returns (SubscribeUserResponse){}
-  rpc UnsubscribeUser(UnsubscribeUserRequest) returns (UnsubscribeUserResponse){}
+  rpc GetTasksList(GetTasksListRequest) returns (TasksList) {
+    option (google.api.http) = {
+      post: "/v1/task/list"
+    };
+  }
 
-  rpc GetUserTasksByTime(GetUserTasksByTimeRequest) returns (TasksList){}
+  rpc SubscribeUser(SubscribeUserRequest) returns (SubscribeUserResponse){
+    option (google.api.http) = {
+      post: "/v1/user/subscribe",
+      body: "*"
+    };
+  }
+
+  rpc UnsubscribeUser(UnsubscribeUserRequest) returns (UnsubscribeUserResponse){
+    option (google.api.http) = {
+      post: "/v1/user/unsubscribe",
+      body: "*"
+    };
+  }
+
+  rpc GetUserTasksByTime(GetUserTasksByTimeRequest) returns (TasksList){
+    option (google.api.http) = {
+      post: "/v1/user/tasks-by-time",
+      body: "*"
+    };
+  }
 }
 
 

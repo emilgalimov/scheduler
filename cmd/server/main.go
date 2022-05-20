@@ -29,7 +29,7 @@ func main() {
 	server := app.NewServer(repo)
 	grpcServer := grpc.NewServer()
 
-	pb.RegisterSomeStuffServer(grpcServer, server)
+	pb.RegisterSmartCalendarServer(grpcServer, server)
 
 	err = grpcServer.Serve(lis)
 	if err != nil {
