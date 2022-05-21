@@ -21,7 +21,6 @@ func main() {
 
 	ctx := context.Background()
 
-	//conn, _ := pgxpool.Connect(ctx, "postgres://user:pass@postgres:5432/tasks")
 	connectString := fmt.Sprintf("postgres://%s:%s@%s:%s/%s",
 		cfg.Postgres.User,
 		cfg.Postgres.Password,
@@ -30,7 +29,6 @@ func main() {
 		cfg.Postgres.DbName,
 	)
 
-	print(connectString)
 	conn, _ := pgxpool.Connect(ctx, connectString)
 
 	if err := conn.Ping(ctx); err != nil {

@@ -5,7 +5,7 @@ import (
 	"os"
 )
 
-// Config struct for webapp config
+// Config struct for webapp config TODO вынести в internal
 type Config struct {
 	Postgres struct {
 		Host     string `yaml:"host"`

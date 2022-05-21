@@ -1,5 +1,8 @@
 #!/bin/bash
 
+include .env.default
+include .env
+
 gen:
 	buf generate
 
@@ -11,5 +14,4 @@ run:
 	go run cmd/server/main.go
 
 migrate:
-	cd migrations
-	goose postgres "user=${DB_USER} password=${DB_PASSWORD} dbname=${DB_NAME} sslmode=disable" up
+	migrations/goose postgres "host=${DB_HOST} user=${DB_USER} password=${DB_PASSWORD} dbname=${DB_NAME} sslmode=disable" up
