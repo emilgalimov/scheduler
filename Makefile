@@ -13,5 +13,11 @@ run:
 	go mod tidy
 	go run cmd/server/main.go
 
+up:
+	docker-compose up -d
+
+down:
+	docker-compose down
+
 migrate:
-	migrations/goose postgres "host=${DB_HOST} user=${DB_USER} password=${DB_PASSWORD} dbname=${DB_NAME} sslmode=disable" up
+	cd migrations; ./goose postgres "host=${DB_HOST} user=${DB_USER} password=${DB_PASSWORD} dbname=${DB_NAME} sslmode=disable" up
