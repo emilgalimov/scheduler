@@ -18,7 +18,7 @@ message TaskID {
 
 message CreateTaskStageRequest{
   uint64 taskID = 1;
-  TaskStage taskStage = 2;
+  TaskStage task_stage = 2;
 }
 
 message TaskStageID{
@@ -53,27 +53,27 @@ message Task {
   uint64 ID = 1;
   string name = 2;
   string description = 3;
-  repeated TaskStage taskStages = 4;
+  repeated TaskStage task_stages = 4;
 }
 
 message TaskStage {
   uint64 ID = 1;
   string name = 2;
   string description = 3;
-  uint64 minutesFromStart = 4;
-  uint64 durationMinutes = 5;
+  uint64 minutes_from_start = 4;
+  uint64 duration_minutes = 5;
 }
 
 message UserTask {
   User user = 1;
   Task task = 2;
-  google.protobuf.Timestamp startTime = 3;
+  google.protobuf.Timestamp start_time = 3;
 }
 
 message GetUserTasksByTimeRequest {
   uint64 user_id = 1;
-  google.protobuf.Timestamp timeFrom = 2;
-  google.protobuf.Timestamp timeTo = 3;
+  google.protobuf.Timestamp time_from = 2;
+  google.protobuf.Timestamp time_to = 3;
 }
 
 service SmartCalendar {

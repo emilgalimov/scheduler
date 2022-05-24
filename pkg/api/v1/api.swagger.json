@@ -35,44 +35,12 @@
         },
         "parameters": [
           {
-            "name": "taskID",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "uint64"
-          },
-          {
-            "name": "taskStage.ID",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "uint64"
-          },
-          {
-            "name": "taskStage.name",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "taskStage.description",
-            "in": "query",
-            "required": false,
-            "type": "string"
-          },
-          {
-            "name": "taskStage.minutesFromStart",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "uint64"
-          },
-          {
-            "name": "taskStage.durationMinutes",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "uint64"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateTaskStageRequest"
+            }
           }
         ],
         "tags": [
@@ -175,18 +143,12 @@
         },
         "parameters": [
           {
-            "name": "UserID",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "uint64"
-          },
-          {
-            "name": "TaskID",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "uint64"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/SubscribeUserRequest"
+            }
           }
         ],
         "tags": [
@@ -213,25 +175,12 @@
         },
         "parameters": [
           {
-            "name": "userId",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "uint64"
-          },
-          {
-            "name": "timeFrom",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "date-time"
-          },
-          {
-            "name": "timeTo",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "date-time"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/GetUserTasksByTimeRequest"
+            }
           }
         ],
         "tags": [
@@ -258,18 +207,12 @@
         },
         "parameters": [
           {
-            "name": "UserID",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "uint64"
-          },
-          {
-            "name": "TaskID",
-            "in": "query",
-            "required": false,
-            "type": "string",
-            "format": "uint64"
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/UnsubscribeUserRequest"
+            }
           }
         ],
         "tags": [
@@ -279,6 +222,48 @@
     }
   },
   "definitions": {
+    "CreateTaskStageRequest": {
+      "type": "object",
+      "properties": {
+        "taskID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "taskStage": {
+          "$ref": "#/definitions/TaskStage"
+        }
+      }
+    },
+    "GetUserTasksByTimeRequest": {
+      "type": "object",
+      "properties": {
+        "userId": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "timeFrom": {
+          "type": "string",
+          "format": "date-time"
+        },
+        "timeTo": {
+          "type": "string",
+          "format": "date-time"
+        }
+      }
+    },
+    "SubscribeUserRequest": {
+      "type": "object",
+      "properties": {
+        "UserID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "TaskID": {
+          "type": "string",
+          "format": "uint64"
+        }
+      }
+    },
     "SubscribeUserResponse": {
       "type": "object",
       "properties": {
@@ -357,6 +342,19 @@
           "items": {
             "$ref": "#/definitions/Task"
           }
+        }
+      }
+    },
+    "UnsubscribeUserRequest": {
+      "type": "object",
+      "properties": {
+        "UserID": {
+          "type": "string",
+          "format": "uint64"
+        },
+        "TaskID": {
+          "type": "string",
+          "format": "uint64"
         }
       }
     },
