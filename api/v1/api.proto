@@ -79,7 +79,8 @@ message GetUserTasksByTimeRequest {
 service SmartCalendar {
   rpc CreateUser(CreateUserRequest) returns (User) {
     option (google.api.http) = {
-      post: "/v1/user/create"
+      post: "/v1/user/create",
+      body: "*"
     };
   }
 

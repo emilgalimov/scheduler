@@ -119,6 +119,16 @@
             }
           }
         },
+        "parameters": [
+          {
+            "name": "body",
+            "in": "body",
+            "required": true,
+            "schema": {
+              "$ref": "#/definitions/CreateUserRequest"
+            }
+          }
+        ],
         "tags": [
           "SmartCalendar"
         ]
@@ -233,6 +243,9 @@
           "$ref": "#/definitions/TaskStage"
         }
       }
+    },
+    "CreateUserRequest": {
+      "type": "object"
     },
     "GetUserTasksByTimeRequest": {
       "type": "object",
