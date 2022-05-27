@@ -100,7 +100,8 @@ service SmartCalendar {
 
   rpc GetTasksList(GetTasksListRequest) returns (TasksList) {
     option (google.api.http) = {
-      post: "/v1/task/list"
+      post: "/v1/task/list",
+      body: "*"
     };
   }
 
